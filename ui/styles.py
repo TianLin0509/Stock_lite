@@ -137,6 +137,8 @@ html, body, [data-testid="stAppViewContainer"] {
   font-family: 'Noto Sans SC', 'PingFang SC', -apple-system, sans-serif;
   color: var(--text);
 }
+/* 避免 Streamlit 顶部 header 遮挡页面内容 */
+.block-container { padding-top: 2.5rem !important; }
 [data-testid="stSidebar"] {
   background: #ffffff !important;
   border-right: 1px solid var(--border) !important;
