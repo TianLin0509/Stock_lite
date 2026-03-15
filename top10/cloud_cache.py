@@ -23,11 +23,23 @@ def _get_config() -> dict:
         return {"token": "", "repo": "", "branch": "data-archive"}
 
 
+def _safe_filename(name: str) -> str:
+    """将含 emoji/特殊字符的文件名转为安全本地名"""
+    # 只保留 ASCII + 中文 + 基本符号
+    safe = ""
+    for ch in name:
+        if ch.isascii() or '\u4e00' <= ch <= '\u9fff':
+            safe += ch
+        else:
+            safe += "_"
+    return safe
+
+
 def pull_top10_cache() -> list[dict]:
     """从 GitHub 拉取最近的 Top10 缓存文件列表
 
     Returns:
-        [{filename, date, model, ...}, ...] 按日期倒序
+        [{filename, safe_filename, git_url, sha, ...}, ...] 按日期倒序
     """
     import requests
 
@@ -57,11 +69,11 @@ def pull_top10_cache() -> list[dict]:
                 continue
             files.append({
                 "filename": name,
-                "download_url": item.get("download_url", ""),
+                "safe_filename": _safe_filename(name),
+                "git_url": item.get("git_url", ""),
                 "sha": item.get("sha", ""),
             })
 
-        # 按文件名（日期开头）倒序
         files.sort(key=lambda x: x["filename"], reverse=True)
         return files
     except Exception as e:
@@ -69,67 +81,59 @@ def pull_top10_cache() -> list[dict]:
         return []
 
 
-def load_top10_data(download_url: str, filename: str) -> dict | None:
-    """下载并缓存 Top10 数据到本地
+def load_top10_data(file_info: dict) -> dict | None:
+    """通过 Git Blob API 下载 Top10 数据并缓存到本地
+
+    Args:
+        file_info: pull_top10_cache() 返回的单个文件信息
 
     Returns:
         完整 JSON 数据 {results, summary, model, date, triggered_by, tokens_used}
     """
     import requests
 
+    safe_name = file_info.get("safe_filename", file_info.get("filename", ""))
+    git_url = file_info.get("git_url", "")
+
     # 先检查本地缓存
     CACHE_DIR.mkdir(parents=True, exist_ok=True)
-    local_path = CACHE_DIR / filename
+    local_path = CACHE_DIR / safe_name
     if local_path.exists():
         try:
             return json.loads(local_path.read_text(encoding="utf-8"))
         except Exception:
             pass
 
-    # 从 GitHub 下载
-    try:
-        r = requests.get(download_url, timeout=30)
-        if r.status_code == 200:
-            data = r.json()
-            # 缓存到本地
-            local_path.write_text(
-                json.dumps(data, ensure_ascii=False, indent=2),
-                encoding="utf-8",
-            )
-            return data
-    except Exception as e:
-        logger.debug("[top10_cloud] 下载 %s 失败: %s", filename, e)
-
-    return None
-
-
-def get_latest_top10() -> dict | None:
-    """获取最新的 Top10 数据（优先本地缓存，再远程拉取）
-
-    Returns:
-        完整 JSON 数据或 None
-    """
-    # 先检查本地是否有今天或昨天的缓存
-    CACHE_DIR.mkdir(parents=True, exist_ok=True)
-    for days_ago in range(3):  # 检查最近3天
-        check_date = (date.today() - timedelta(days=days_ago)).isoformat()
-        for f in sorted(CACHE_DIR.glob(f"{check_date}_*.json"), reverse=True):
-            try:
-                data = json.loads(f.read_text(encoding="utf-8"))
-                if data.get("results"):
-                    return data
-            except Exception:
-                continue
-
-    # 本地无缓存，从 GitHub 拉取
-    files = pull_top10_cache()
-    if not files:
+    # 通过 Git Blob API 下载（避免 URL 中 emoji/空格问题）
+    if not git_url:
         return None
 
-    # 取最新的文件
-    for f in files:
-        data = load_top10_data(f["download_url"], f["filename"])
-        if data and data.get("results"):
-            return data
+    cfg = _get_config()
+    token = cfg["token"]
+    if not token:
+        return None
 
-    return None
+    try:
+        headers = {
+            "Authorization": f"token {token}",
+            "Accept": "application/vnd.github.v3+json",
+        }
+        r = requests.get(git_url, headers=headers, timeout=30)
+        if r.status_code != 200:
+            logger.debug("[top10_cloud] Blob API 返回 %s", r.status_code)
+            return None
+
+        blob = r.json()
+        content_b64 = blob.get("content", "")
+        content_bytes = base64.b64decode(content_b64)
+        data = json.loads(content_bytes.decode("utf-8"))
+
+        # 缓存到本地
+        local_path.write_text(
+            json.dumps(data, ensure_ascii=False, indent=2),
+            encoding="utf-8",
+        )
+        return data
+    except Exception as e:
+        logger.debug("[top10_cloud] 下载失败: %s", e)
+        return None

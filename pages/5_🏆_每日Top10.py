@@ -36,12 +36,8 @@ data = st.session_state.get("_top10_data")
 if not data or not data.get("results"):
     with st.spinner("📡 正在从云端获取 Top10 数据..."):
         files = pull_top10_cache()
-        # 自动加载最新的可用记录
         for f in files:
-            fname = f["filename"]
-            if fname.startswith(("_", ".")):
-                continue
-            loaded = load_top10_data(f["download_url"], fname)
+            loaded = load_top10_data(f)
             if loaded and loaded.get("results"):
                 data = loaded
                 st.session_state["_top10_data"] = data
@@ -59,15 +55,11 @@ _user = data.get("triggered_by", "")
 _tokens = data.get("tokens_used", 0)
 _tokens_display = f"{_tokens / 10000:.1f}万" if _tokens >= 10000 else f"{_tokens:,}"
 
-from datetime import date as _date_cls
-_is_today = (_date == _date_cls.today().isoformat())
-_date_label = f"📅 <strong>{_date}</strong>{'（今日）' if _is_today else '（历史）'}"
-
 st.markdown(
     f'<div style="padding:8px 16px;background:linear-gradient(135deg,#eef2ff,#faf5ff);'
     f'border-radius:10px;border:1px solid #c7d2fe;margin-bottom:12px;'
     f'font-size:0.85rem;color:#4338ca;">'
-    f'{_date_label} &nbsp;·&nbsp; '
+    f'📅 <strong>{_date}</strong> &nbsp;·&nbsp; '
     f'🤖 {_model} &nbsp;·&nbsp; '
     f'👤 分析来自 <strong>{_user}</strong> &nbsp;·&nbsp; '
     f'🪙 {_tokens_display} tokens'
