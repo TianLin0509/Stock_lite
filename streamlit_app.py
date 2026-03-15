@@ -66,9 +66,16 @@ inject_css()
 logger = logging.getLogger(__name__)
 
 
+from ui.auth import inject_auto_login, save_login, clear_login
+
+
 def _show_login():
     """显示登录页面"""
     import re
+
+    # 尝试从 localStorage 自动恢复登录
+    inject_auto_login()
+
     st.markdown("""
 <div class="app-header">
   <h1>📈 Stock Lite v1.09</h1>
@@ -96,6 +103,7 @@ def _show_login():
         st.session_state["current_user"] = name
         st.session_state["_user_base_tokens"] = user_data["token_usage"]["total"]
         st.query_params["u"] = name
+        save_login(name)
         st.rerun()
     st.caption("无需注册，输入用户名即可使用。数据将按用户名保存。")
 
@@ -174,6 +182,7 @@ def main():
             user_data = load_user(_saved_user)
             st.session_state["current_user"] = _saved_user
             st.session_state["_user_base_tokens"] = user_data["token_usage"]["total"]
+            save_login(_saved_user)
         else:
             _show_login()
             return
@@ -233,6 +242,7 @@ def main():
     # ── Sidebar ───────────────────────────────────────────────────────────
     def _on_logout():
         _save_analysis_to_history()
+        clear_login()
         for k in list(st.session_state.keys()):
             del st.session_state[k]
         st.query_params.clear()

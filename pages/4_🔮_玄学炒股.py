@@ -8,10 +8,9 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 st.set_page_config(page_title="🔮 玄学炒股", page_icon="🔮", layout="wide")
 
-# 登录检查
-if "current_user" not in st.session_state:
-    st.warning("请先在主页登录")
-    st.stop()
+# 登录检查（支持 localStorage 自动恢复）
+from ui.auth import require_login
+require_login()
 
 # 注入CSS + 侧边栏
 from ui.styles import inject_css

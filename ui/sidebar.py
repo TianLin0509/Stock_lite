@@ -3,6 +3,7 @@
 import streamlit as st
 from config import MODEL_CONFIGS, MODEL_NAMES
 from data.tushare_client import get_ts_error
+from ui.auth import clear_login
 
 
 def render_sidebar(current_user: str, on_logout) -> str:
@@ -10,6 +11,7 @@ def render_sidebar(current_user: str, on_logout) -> str:
     with st.sidebar:
         st.markdown(f"**👤 {current_user}**")
         if st.button("🔄 切换用户", key="logout_btn"):
+            clear_login()
             on_logout()
 
         st.markdown("---")
