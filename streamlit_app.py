@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-📈 Stock Lite v1.08 — 轻量投研助手
+📈 Stock Lite v1.09 — 轻量投研助手
 核心分析：预期差 · K线趋势 · 基本面 | 深度分析：舆情 · 板块 · 股东
 """
 
@@ -35,7 +35,7 @@ import streamlit as st
 
 # ── Page Config ──────────────────────────────────────────────────────────
 st.set_page_config(
-    page_title="Stock Lite v1.08 🌸",
+    page_title="Stock Lite v1.09 🌸",
     page_icon="📈",
     layout="wide",
     initial_sidebar_state="auto",
@@ -71,7 +71,7 @@ def _show_login():
     import re
     st.markdown("""
 <div class="app-header">
-  <h1>📈 Stock Lite v1.08</h1>
+  <h1>📈 Stock Lite v1.09</h1>
   <p>预期差挖掘 · K线趋势研判 · 基本面剖析 — 轻量版</p>
 </div>
 """, unsafe_allow_html=True)
@@ -143,6 +143,28 @@ def _save_analysis_to_history():
     st.session_state.pop("_cached_user_data", None)
 
 
+def _build_stock_options() -> list[str]:
+    """构建股票搜索候选列表，优先本地 CSV（毫秒级），避免阻塞首屏"""
+    try:
+        from data.tushare_client import load_stock_list
+        _sl_df, _ = load_stock_list()
+        if not _sl_df.empty:
+            if "symbol" in _sl_df.columns:
+                _codes = _sl_df["symbol"].astype(str).str.zfill(6)
+            else:
+                _codes = _sl_df["ts_code"].astype(str).str.split(".").str[0].str.zfill(6)
+            _names = _sl_df.get("name", "").astype(str)
+            _opts = sorted((_codes + " " + _names).tolist())
+            st.session_state["_stock_options"] = _opts
+            st.session_state["_stock_opts_ver"] = 2
+            return _opts
+    except Exception:
+        pass
+    st.session_state["_stock_options"] = []
+    st.session_state["_stock_opts_ver"] = 2
+    return []
+
+
 def main():
     # ── 登录门（支持刷新保持登录） ────────────────────────────────────
     if "current_user" not in st.session_state:
@@ -167,15 +189,18 @@ def main():
             logger.debug("[main] 云端同步失败: %s", e)
         st.session_state["_cloud_synced"] = True
 
-    # ── 启动时清理过期归档（>30天） ─────────────────────────────────────
+    # ── 启动时清理过期归档（>30天，后台执行不阻塞UI） ─────────────────
     if "_archive_cleaned" not in st.session_state:
-        try:
-            from utils.archive import cleanup_expired
-            _removed = cleanup_expired(30)
-            if _removed:
-                logger.info("[main] 已清理 %d 个过期归档文件", _removed)
-        except Exception as e:
-            logger.debug("[main] 归档清理失败: %s", e)
+        import threading as _th
+        def _do_cleanup():
+            try:
+                from utils.archive import cleanup_expired
+                _removed = cleanup_expired(30)
+                if _removed:
+                    logger.info("[main] 已清理 %d 个过期归档文件", _removed)
+            except Exception as e:
+                logger.debug("[main] 归档清理失败: %s", e)
+        _th.Thread(target=_do_cleanup, daemon=True).start()
         st.session_state["_archive_cleaned"] = True
 
     # ── 上方区域折叠控制 ──────────────────────────────────────────────────
@@ -185,7 +210,7 @@ def main():
     if not _upper_collapsed:
         st.markdown("""
 <div class="app-header">
-  <h1>📈 Stock Lite v1.08</h1>
+  <h1>📈 Stock Lite v1.09</h1>
   <p>预期差挖掘 · K线趋势研判 · 基本面剖析 — 轻量版</p>
 </div>
 """, unsafe_allow_html=True)
@@ -251,27 +276,11 @@ def main():
             _go_label = "🚀 一键分析"
             _go_disabled = False
 
-        # 构建股票搜索候选列表（带缓存）
+        # 构建股票搜索候选列表（带缓存，不阻塞首屏）
         if "_stock_options" not in st.session_state or st.session_state.get("_stock_opts_ver") != 2:
-            try:
-                from data.tushare_client import load_stock_list
-                _sl_df, _ = load_stock_list()
-                if not _sl_df.empty:
-                    if "symbol" in _sl_df.columns:
-                        _codes = _sl_df["symbol"].astype(str).str.zfill(6)
-                    else:
-                        _codes = _sl_df["ts_code"].astype(str).str.split(".").str[0].str.zfill(6)
-                    _names = _sl_df.get("name", "").astype(str)
-                    _opts = (_codes + " " + _names).tolist()
-                    st.session_state["_stock_options"] = sorted(_opts)
-                else:
-                    st.session_state["_stock_options"] = []
-                st.session_state["_stock_opts_ver"] = 2
-            except Exception:
-                st.session_state["_stock_options"] = []
-                st.session_state["_stock_opts_ver"] = 2
-
-        _stock_options = st.session_state["_stock_options"]
+            _stock_options = _build_stock_options()
+        else:
+            _stock_options = st.session_state["_stock_options"]
 
         # 搜索框（独占一行）
         if _stock_options:

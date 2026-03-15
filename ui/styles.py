@@ -5,11 +5,11 @@ import streamlit as st
 
 def inject_css():
     """注入全局 CSS 样式"""
-    # 异步加载 Google Fonts（不阻塞首屏渲染）
+    # 异步加载 Google Fonts（国内 CDN 镜像，不阻塞首屏渲染）
     st.markdown(
-        '<link rel="preconnect" href="https://fonts.googleapis.com">'
-        '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'
-        '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?'
+        '<link rel="preconnect" href="https://fonts.googleapis.cn">'
+        '<link rel="preconnect" href="https://gstatic.loli.net" crossorigin>'
+        '<link rel="stylesheet" href="https://fonts.googleapis.cn/css2?'
         'family=Nunito:wght@600;700;800&family=Noto+Sans+SC:wght@400;500;700'
         '&display=swap" media="print" onload="this.media=\'all\'">',
         unsafe_allow_html=True,

@@ -1,9 +1,13 @@
-"""数据层 — Tushare 优先，akshare 备用，东方财富保底"""
+"""数据层 — Tushare 优先，akshare 备用，东方财富保底
+
+Tushare 探测在后台线程中执行，不阻塞首屏加载。
+探测完成前所有请求自动走 fallback，探测成功后自动切换回 Tushare。
+"""
 
 import logging
+import threading
 import streamlit as st
 import pandas as pd
-import tushare as ts
 import re
 import os
 from datetime import datetime, timedelta
@@ -12,15 +16,24 @@ logger = logging.getLogger(__name__)
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# INIT
+# LAZY INIT — 后台线程探测，不阻塞 import
 # ══════════════════════════════════════════════════════════════════════════════
 
 TUSHARE_TOKEN = st.secrets.get("TUSHARE_TOKEN", "")
 TUSHARE_URL   = st.secrets.get("TUSHARE_URL", "http://lianghua.nanyangqiankun.top")
 
+_init_lock = threading.Lock()
+_pro = None
+_ts_err = ""
+_init_done = threading.Event()
+_data_source = "fallback"
 
-def _init_tushare():
+
+def _init_tushare_bg():
+    """后台探测 Tushare 可用性（超时 5 秒）"""
+    global _pro, _ts_err, _data_source
     try:
+        import tushare as ts
         import requests as _req
 
         ts.set_token(TUSHARE_TOKEN)
@@ -28,29 +41,43 @@ def _init_tushare():
         p._DataApi__token = TUSHARE_TOKEN
         p._DataApi__http_url = TUSHARE_URL
 
-        # 缩短超时，避免阻塞首屏加载
         _orig_post = _req.post
         def _patched_post(*a, **kw):
-            kw.setdefault("timeout", 10)
+            kw.setdefault("timeout", 5)
             return _orig_post(*a, **kw)
         _req.post = _patched_post
 
-        # 快速探测：只试 1 次，超时即走 fallback（有三层兜底不怕）
         try:
             test = p.trade_cal(exchange="SSE", start_date="20240101", end_date="20240103")
             if test is not None and not test.empty:
-                return p, None
+                with _init_lock:
+                    _pro = p
+                    _ts_err = ""
+                    _data_source = "tushare"
+                logger.info("[tushare] 后台探测成功，Tushare 可用")
+                return
         except Exception:
             pass
-        return None, "Tushare 接口返回空，已自动切换备用数据源"
+        with _init_lock:
+            _ts_err = "Tushare 接口返回空，已自动切换备用数据源"
+        logger.debug("[tushare] 后台探测失败，使用 fallback")
     except Exception as e:
-        return None, f"Tushare 初始化失败：{e}"
+        with _init_lock:
+            _ts_err = f"Tushare 初始化失败：{e}"
+        logger.debug("[tushare] 初始化异常: %s", e)
+    finally:
+        _init_done.set()
 
 
-_pro, _ts_err = _init_tushare()
+# 立即启动后台探测线程
+_init_thread = threading.Thread(target=_init_tushare_bg, daemon=True)
+_init_thread.start()
 
-# 数据源状态追踪
-_data_source = "tushare" if _pro else "fallback"
+
+def _get_pro():
+    """获取 Tushare pro 实例（如果后台探测已完成）"""
+    with _init_lock:
+        return _pro
 
 
 def ts_ok() -> bool:
@@ -59,16 +86,21 @@ def ts_ok() -> bool:
 
 
 def get_ts_error() -> str:
-    return _ts_err or ""
+    # 探测未完成时不显示错误（避免一闪而过的警告）
+    if not _init_done.is_set():
+        return ""
+    with _init_lock:
+        return _ts_err or ""
 
 
 def get_data_source() -> str:
     """返回当前实际使用的数据源"""
-    return _data_source
+    with _init_lock:
+        return _data_source
 
 
 def get_pro():
-    return _pro
+    return _get_pro()
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -125,7 +157,7 @@ def _try_with_fallback(tushare_fn, akshare_fn, eastmoney_fn=None, label="数据"
     global _data_source
 
     # 第一层：Tushare
-    if _pro is not None:
+    if _get_pro() is not None:
         try:
             result, err = tushare_fn()
             if err is None:
@@ -179,10 +211,10 @@ def load_stock_list() -> tuple[pd.DataFrame, str | None]:
         except Exception as e:
             logger.debug("[load_stock_list] CSV 读取失败: %s", e)
 
-    if _pro is not None:
+    if _get_pro() is not None:
         try:
             df = _retry_call(
-                lambda: _pro.stock_basic(
+                lambda: _get_pro().stock_basic(
                     exchange="", list_status="L",
                     fields="ts_code,symbol,name,industry,area,market"
                 ),
@@ -232,7 +264,7 @@ def get_basic_info(ts_code: str) -> tuple[dict, str | None]:
     from data.fallback import ak_get_basic_info, em_get_basic_info
 
     def _tushare():
-        if _pro is None:
+        if _get_pro() is None:
             return {}, _ts_err
         result = {}
         err_msgs = []
@@ -246,7 +278,7 @@ def get_basic_info(ts_code: str) -> tuple[dict, str | None]:
                                "地区": row.get("area", ""), "市场": row.get("market", "")})
         try:
             df_db = _retry_call(
-                lambda: _pro.daily_basic(
+                lambda: _get_pro().daily_basic(
                     ts_code=ts_code, start_date=ndays_ago(10), end_date=today(),
                     fields="ts_code,trade_date,close,pe_ttm,pb,ps_ttm,total_mv,turnover_rate,volume_ratio"
                 ),
@@ -285,10 +317,10 @@ def get_price_df(ts_code: str, days: int = 140) -> tuple[pd.DataFrame, str | Non
     from data.fallback import ak_get_price_df, em_get_price_df
 
     def _tushare():
-        if _pro is None:
+        if _get_pro() is None:
             return pd.DataFrame(), _ts_err
         df = _retry_call(
-            lambda: _pro.daily(ts_code=ts_code, start_date=ndays_ago(days), end_date=today()),
+            lambda: _get_pro().daily(ts_code=ts_code, start_date=ndays_ago(days), end_date=today()),
             retries=3, delay=1,
         )
         if df is None or df.empty:
@@ -314,12 +346,12 @@ def get_financial(ts_code: str) -> tuple[str, str | None]:
     from data.fallback import ak_get_financial
 
     def _tushare():
-        if _pro is None:
+        if _get_pro() is None:
             return "", _ts_err
         parts, errs = [], []
         try:
             df = _retry_call(
-                lambda: _pro.fina_indicator(
+                lambda: _get_pro().fina_indicator(
                     ts_code=ts_code,
                     fields="end_date,roe,roa,grossprofit_margin,netprofit_margin,"
                            "debt_to_assets,current_ratio,quick_ratio,revenue_yoy,netprofit_yoy,basic_eps"
@@ -333,7 +365,7 @@ def get_financial(ts_code: str) -> tuple[str, str | None]:
         try:
             rpt = str((datetime.now().year - 1) * 10000 + 1231)
             df2 = _retry_call(
-                lambda: _pro.income(
+                lambda: _get_pro().income(
                     ts_code=ts_code, start_date=str(int(rpt) - 30000), end_date=rpt,
                     fields="end_date,total_revenue,operate_profit,n_income,n_income_attr_p"
                 ),
@@ -361,10 +393,10 @@ def get_capital_flow(ts_code: str) -> tuple[str, str | None]:
     from data.fallback import ak_get_capital_flow
 
     def _tushare():
-        if _pro is None:
+        if _get_pro() is None:
             return "", _ts_err
         df = _retry_call(
-            lambda: _pro.moneyflow(
+            lambda: _get_pro().moneyflow(
                 ts_code=ts_code, start_date=ndays_ago(20), end_date=today(),
                 fields="trade_date,buy_sm_amount,buy_md_amount,buy_lg_amount,"
                        "buy_elg_amount,sell_sm_amount,sell_md_amount,sell_lg_amount,"
@@ -387,11 +419,11 @@ def get_capital_flow(ts_code: str) -> tuple[str, str | None]:
 @st.cache_data(ttl=600, show_spinner=False)
 def get_dragon_tiger(ts_code: str) -> tuple[str, str | None]:
     """龙虎榜仅 Tushare 有，无备用源"""
-    if _pro is None:
+    if _get_pro() is None:
         return "龙虎榜暂不可用（Tushare 不可用）", None
     try:
         df = _retry_call(
-            lambda: _pro.top_list(trade_date=ndays_ago(30), ts_code=ts_code,
+            lambda: _get_pro().top_list(trade_date=ndays_ago(30), ts_code=ts_code,
                                   fields="trade_date,name,close,pct_change,net_amount,reason"),
             retries=3, delay=1,
         )
@@ -406,10 +438,10 @@ def get_dragon_tiger(ts_code: str) -> tuple[str, str | None]:
 def get_valuation_history(ts_code: str, years: int = 5) -> tuple[pd.DataFrame, str | None]:
     """获取历史估值数据（PE_TTM, PB, PS_TTM），用于分位图"""
     def _tushare():
-        if _pro is None:
+        if _get_pro() is None:
             return pd.DataFrame(), _ts_err
         df = _retry_call(
-            lambda: _pro.daily_basic(
+            lambda: _get_pro().daily_basic(
                 ts_code=ts_code,
                 start_date=ndays_ago(years * 365),
                 end_date=today(),
@@ -451,11 +483,11 @@ def get_valuation_history(ts_code: str, years: int = 5) -> tuple[pd.DataFrame, s
 def get_northbound_flow(ts_code: str) -> tuple[str, str | None]:
     """获取北向资金持仓变化"""
     def _tushare():
-        if _pro is None:
+        if _get_pro() is None:
             return "", _ts_err
         try:
             df = _retry_call(
-                lambda: _pro.hk_hold(
+                lambda: _get_pro().hk_hold(
                     ts_code=ts_code,
                     start_date=ndays_ago(60),
                     end_date=today(),
@@ -489,11 +521,11 @@ def get_northbound_flow(ts_code: str) -> tuple[str, str | None]:
 def get_margin_trading(ts_code: str) -> tuple[str, str | None]:
     """获取融资融券数据"""
     def _tushare():
-        if _pro is None:
+        if _get_pro() is None:
             return "", _ts_err
         try:
             df = _retry_call(
-                lambda: _pro.margin_detail(
+                lambda: _get_pro().margin_detail(
                     ts_code=ts_code,
                     start_date=ndays_ago(30),
                     end_date=today(),
@@ -542,11 +574,11 @@ def get_sector_peers(ts_code: str) -> tuple[str, str | None]:
         return f"行业：{industry}，同业个股数据不足", None
 
     # 尝试获取同行估值数据
-    if _pro is not None:
+    if _get_pro() is not None:
         try:
             codes = ",".join(peers["ts_code"].tolist()[:10])
             df_val = _retry_call(
-                lambda: _pro.daily_basic(
+                lambda: _get_pro().daily_basic(
                     ts_code=codes,
                     trade_date=today(),
                     fields="ts_code,close,pe_ttm,pb,total_mv,turnover_rate"
@@ -572,11 +604,11 @@ def get_sector_peers(ts_code: str) -> tuple[str, str | None]:
 @st.cache_data(ttl=600, show_spinner=False)
 def get_holders_info(ts_code: str) -> tuple[str, str | None]:
     """获取十大股东信息"""
-    if _pro is None:
+    if _get_pro() is None:
         return "", "Tushare 不可用"
     try:
         df = _retry_call(
-            lambda: _pro.top10_holders(
+            lambda: _get_pro().top10_holders(
                 ts_code=ts_code,
                 fields="ann_date,end_date,holder_name,hold_amount,hold_ratio"
             ),
@@ -595,11 +627,11 @@ def get_holders_info(ts_code: str) -> tuple[str, str | None]:
 @st.cache_data(ttl=600, show_spinner=False)
 def get_pledge_info(ts_code: str) -> tuple[str, str | None]:
     """获取股权质押统计"""
-    if _pro is None:
+    if _get_pro() is None:
         return "", "Tushare 不可用"
     try:
         df = _retry_call(
-            lambda: _pro.pledge_stat(
+            lambda: _get_pro().pledge_stat(
                 ts_code=ts_code,
                 fields="end_date,pledge_count,unrest_pledge,rest_pledge,total_share,pledge_ratio"
             ),
@@ -620,12 +652,12 @@ def get_pledge_info(ts_code: str) -> tuple[str, str | None]:
 @st.cache_data(ttl=600, show_spinner=False)
 def get_fund_holdings(ts_code: str) -> tuple[str, str | None]:
     """获取基金持仓变动"""
-    if _pro is None:
+    if _get_pro() is None:
         return "", "Tushare 不可用"
     try:
         # 获取最近两期基金持仓汇总
         df = _retry_call(
-            lambda: _pro.fund_portfolio(
+            lambda: _get_pro().fund_portfolio(
                 ts_code=ts_code,
                 fields="ann_date,end_date,symbol,mkv,amount,stk_mkv_ratio"
             ),
