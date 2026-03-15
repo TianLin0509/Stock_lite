@@ -272,76 +272,10 @@ def render_analysis_tab(client, cfg_now, selected_model):
         st.session_state["active_view"] = "overview"
     active_view = st.session_state["active_view"]
 
-    # ── 操作栏：4 按钮（预期差 / 趋势 / 基本面 / 总结）──
-    _action_cols = st.columns(4)
-
     core_all_done = stock_ready and all(analyses.get(k) for k in CORE_KEYS)
     deep_all_done = all(analyses.get(k) for k in DEEP_KEYS)
 
-    # Col 0-2: 核心三项按钮
-    _view_map = [
-        (0, "expectation", "预期差", "🔍"),
-        (1, "trend", "趋势", "📈"),
-        (2, "fundamentals", "基本面", "📋"),
-    ]
-    for col_idx, key, label, icon in _view_map:
-        with _action_cols[col_idx]:
-            done = bool(analyses.get(key))
-            _btn_type = "primary" if active_view == key else "secondary"
-
-            if _is_analyzing and not done:
-                _btn_label = f"⏳ {label}"
-            elif done:
-                _btn_label = f"✅ {label}"
-            else:
-                _btn_label = f"{icon} {label}"
-
-            query = st.session_state.get("query_input", "")
-            # 分析进行中：已完成的按钮可点击查看，未完成的禁用
-            _disabled = (_is_analyzing and not done) or (not stock_ready and not query)
-            if st.button(_btn_label, type=_btn_type,
-                         use_container_width=True, key=f"btn_{key}",
-                         disabled=_disabled):
-                st.session_state["active_view"] = key
-                if not done:
-                    if not stock_ready and query:
-                        st.session_state["_pending_resolve"] = query
-                        st.session_state["_pending_analysis_key"] = key
-                        st.rerun()
-                    if client and stock_ready:
-                        # 标记待执行，下次 rerun 时在下方执行
-                        st.session_state["_pending_single_key"] = key
-                        st.rerun()
-                else:
-                    st.rerun()
-
-    # Col 3: 总结按钮（核心三项完成后可用）
-    with _action_cols[3]:
-        _summary_type = "primary" if active_view == "summary" else "secondary"
-        if core_all_done:
-            _summary_label = "✅ 总结"
-        else:
-            _summary_label = "📊 总结"
-        if st.button(_summary_label, type=_summary_type,
-                     use_container_width=True, key="btn_summary",
-                     disabled=not core_all_done):
-            st.session_state["active_view"] = "summary"
-            st.rerun()
-
-    # 深度分析按钮：仅在核心三项完成后显示（独立行）
-    if core_all_done or deep_all_done:
-        if deep_all_done:
-            st.button("✅ 舆情+板块+股东 深度分析已完成", disabled=True,
-                      use_container_width=True, key="btn_deep")
-        else:
-            if st.button("🔬 开始深度分析（舆情+板块+股东）", use_container_width=True,
-                         key="btn_deep", type="primary",
-                         disabled=_is_analyzing):
-                if client:
-                    _run_deep_analysis(client, cfg_now, selected_model, analyses)
-                    st.rerun()
-
-    # ── 启动待处理的分析（后台线程）──────────────────────────
+    # ── 启动待处理的分析（后台线程，在按钮渲染前处理）──────────
     if _pending_core and client and stock_ready and not _bg_running:
         st.session_state.pop("_pending_core_analysis", None)
         st.session_state.pop("_bg_tip_idx", None)
@@ -363,6 +297,66 @@ def render_analysis_tab(client, cfg_now, selected_model):
     # ── 轮询后台分析进度（会 sleep+rerun 直到完成）──────────
     if _bg_running:
         _poll_bg_analysis()  # 会 sleep(4) + st.rerun() 直到 finished
+
+    # ── 操作栏：4 按钮（预期差 / 趋势 / 基本面 / 总结）──
+    # 放在轮询之后渲染，避免轮询rerun时与stale内容产生重复按钮
+    _action_cols = st.columns(4)
+
+    _view_map = [
+        (0, "expectation", "预期差", "🔍"),
+        (1, "trend", "趋势", "📈"),
+        (2, "fundamentals", "基本面", "📋"),
+    ]
+    for col_idx, key, label, icon in _view_map:
+        with _action_cols[col_idx]:
+            done = bool(analyses.get(key))
+            _btn_type = "primary" if active_view == key else "secondary"
+
+            if _is_analyzing and not done:
+                _btn_label = f"⏳ {label}"
+            elif done:
+                _btn_label = f"✅ {label}"
+            else:
+                _btn_label = f"{icon} {label}"
+
+            query = st.session_state.get("query_input", "")
+            _disabled = (_is_analyzing and not done) or (not stock_ready and not query)
+            if st.button(_btn_label, type=_btn_type,
+                         use_container_width=True, key=f"btn_{key}",
+                         disabled=_disabled):
+                st.session_state["active_view"] = key
+                if not done:
+                    if not stock_ready and query:
+                        st.session_state["_pending_resolve"] = query
+                        st.session_state["_pending_analysis_key"] = key
+                        st.rerun()
+                    if client and stock_ready:
+                        st.session_state["_pending_single_key"] = key
+                        st.rerun()
+                else:
+                    st.rerun()
+
+    with _action_cols[3]:
+        _summary_type = "primary" if active_view == "summary" else "secondary"
+        _summary_label = "✅ 总结" if core_all_done else "📊 总结"
+        if st.button(_summary_label, type=_summary_type,
+                     use_container_width=True, key="btn_summary",
+                     disabled=not core_all_done):
+            st.session_state["active_view"] = "summary"
+            st.rerun()
+
+    # 深度分析按钮
+    if core_all_done or deep_all_done:
+        if deep_all_done:
+            st.button("✅ 舆情+板块+股东 深度分析已完成", disabled=True,
+                      use_container_width=True, key="btn_deep")
+        else:
+            if st.button("🔬 开始深度分析（舆情+板块+股东）", use_container_width=True,
+                         key="btn_deep", type="primary",
+                         disabled=_is_analyzing):
+                if client:
+                    _run_deep_analysis(client, cfg_now, selected_model, analyses)
+                    st.rerun()
 
     # ── 状态栏：仅在缓存来源或分析中时显示 ──────────────────
     active_view = st.session_state.get("active_view", "overview")
