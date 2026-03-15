@@ -3,6 +3,7 @@
 import time
 import streamlit as st
 import pandas as pd
+from analysis.moe import MOE_ROLES
 from ai.client import call_ai
 from ai.context import build_analysis_context
 
@@ -63,6 +64,23 @@ def show_completed_results(client=None, cfg=None, model_name=""):
         _show_analysis_result("holders", "股东/机构动向", "👥")
 
 
+def _render_moe_results():
+    moe = st.session_state.get("moe_results", {})
+    if not moe.get("done"):
+        return
+    name = st.session_state.get("stock_name", "")
+    st.markdown(f"#### 🎯 {name} · MoE 辩论裁决结果")
+    for role in MOE_ROLES:
+        text = moe["roles"].get(role["key"], "")
+        st.markdown(f"""<div class="role-card {role['css']}">
+  <div class="role-badge">{role['badge']}</div>
+  <div class="role-content">{text}</div>
+</div>""", unsafe_allow_html=True)
+    st.markdown("---")
+    st.markdown(f"""<div class="role-card r-ceo">
+  <div class="role-badge">👔 首席执行官 · 最终裁决</div>
+  <div class="role-content">{moe['ceo']}</div>
+</div>""", unsafe_allow_html=True)
 
 
 

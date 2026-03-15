@@ -148,3 +148,124 @@ def run_analysis_sync(key, client, cfg, model_name, name, tscode, info, fin, df,
     except Exception as e:
         logger.debug("[run_analysis_sync/%s] 异常: %s", key, e)
         return None, f"{label}异常：{e}", None
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# MoE 同步辩论
+# ══════════════════════════════════════════════════════════════════════════════
+
+def run_moe_sync(client, cfg, model_name, name, tscode, analyses,
+                 username="", progress_cb=None):
+    """同步 MoE 辩论：返回 (moe_data, error)
+
+    moe_data = {"roles": {...}, "ceo": "...", "done": True}
+    """
+    from concurrent.futures import ThreadPoolExecutor, as_completed
+    from analysis.moe import MOE_ROLES, CEO_SYSTEM
+    code6 = to_code6(tscode)
+
+    try:
+        if progress_cb:
+            progress_cb("📋 汇总预期差、趋势、基本面三项分析结果...")
+        context = build_analysis_context(analyses)
+        if progress_cb:
+            progress_cb("🏟️ 召集五方专家并行发表观点...")
+
+        def _call_role(role):
+            prompt = f"""辩论标的：{name}（{code6}）
+
+## 分析背景
+{context}
+
+---
+从你的角色视角给出明确判断，控制在250字以内：
+
+**核心判断：** 看多/看空/中性/观望
+**判断依据（3条，引用上方分析中的具体数据）：**
+1.
+2.
+3.
+**操作建议：**（具体操作+入场价+止损价+目标价）
+**最大风险：**（1条，具体描述）
+
+保持角色特色和语言风格。"""
+            text, err = call_ai(client, cfg, prompt,
+                                system=role["system"], max_tokens=800,
+                                username=username)
+            if err:
+                text = f"⚠️ 该角色分析失败：{err}"
+            return role, text
+
+        role_results = {}
+        with ThreadPoolExecutor(max_workers=5) as pool:
+            futs = {pool.submit(_call_role, role): role for role in MOE_ROLES}
+            done_count = 0
+            for fut in as_completed(futs):
+                role, text = fut.result()
+                role_results[role["key"]] = text
+                done_count += 1
+                if progress_cb:
+                    progress_cb(f"  ✓ [{done_count}/{len(MOE_ROLES)}] {role['badge']} 观点已提交")
+
+        if progress_cb:
+            progress_cb("👔 首席执行官正在综合五方观点，做最终裁决...")
+
+        roles_text = "\n\n".join(
+            f"【{r['badge']}】\n{role_results.get(r['key'], '')}"
+            for r in MOE_ROLES
+        )
+
+        ceo_prompt = f"""标的：{name}（{code6}）
+
+## 五位专家观点
+{roles_text}
+
+## 原始分析摘要
+{context}
+
+---
+综合以上信息给出最终操作裁决。
+⚠️ **散户（韭菜代表）的观点是反向指标，逆向参考。**
+💡 **特别关注价值投机手的「三维共振」判断，若基本面+题材+技术三者不共振，需降级评价。**
+
+## 🎯 最终操作结论
+
+**操作评级：** 强烈买入/买入/谨慎介入/持有观察/减持/回避
+
+**裁决逻辑（3-4句，说明为什么这样判断）：**
+
+**目标价体系：**
+| 维度 | 价格 | 依据 |
+|-----|-----|-----|
+| 当前股价 | ___元 | — |
+| 短线目标（1-2周）| | |
+| 中线目标（1-3月）| | |
+| 止损位 | | |
+
+**仓位策略：** 建议仓位___%, 介入方式：___
+
+**核心逻辑（2条）：**
+1.
+2.
+
+**核心风险（2条）：**
+1.
+2.
+
+**策略有效期：** ___个交易日，若___则策略失效。"""
+
+        ceo_text, ceo_err = call_ai(client, cfg, ceo_prompt,
+                                     system=CEO_SYSTEM, max_tokens=2000,
+                                     username=username)
+        if ceo_err:
+            ceo_text = f"⚠️ CEO裁决生成失败：{ceo_err}\n\n建议切换其他模型后重新尝试。"
+
+        if progress_cb:
+            progress_cb("✅ MoE 五方辩论裁决完成！")
+
+        moe_data = {"roles": role_results, "ceo": ceo_text, "done": True}
+        return moe_data, None
+
+    except Exception as e:
+        logger.debug("[run_moe_sync] 异常: %s", e)
+        return None, f"MoE 辩论异常：{e}"
