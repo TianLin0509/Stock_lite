@@ -45,6 +45,18 @@ def load_user(username: str) -> dict:
                 return json.loads(path.read_text(encoding="utf-8"))
             except (json.JSONDecodeError, OSError):
                 pass
+    # 本地没有，尝试从 GitHub 云端拉取
+    try:
+        from utils.cloud_archive import pull_user_data
+        if pull_user_data(username):
+            with lock:
+                if path.exists():
+                    try:
+                        return json.loads(path.read_text(encoding="utf-8"))
+                    except (json.JSONDecodeError, OSError):
+                        pass
+    except Exception:
+        pass
     return _default_user(username)
 
 
@@ -60,6 +72,12 @@ def save_user(data: dict):
             json.dumps(data, ensure_ascii=False, indent=2),
             encoding="utf-8",
         )
+    # 异步推送到 GitHub
+    try:
+        from utils.cloud_archive import push_user_data_async
+        push_user_data_async(username)
+    except Exception:
+        pass
 
 
 def add_user_tokens(username: str, prompt: int, completion: int, total: int):

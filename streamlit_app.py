@@ -158,6 +158,15 @@ def main():
 
     current_user = st.session_state["current_user"]
 
+    # ── 启动时从 GitHub 拉取云端归档（仅一次） ──────────────────────────
+    if "_cloud_synced" not in st.session_state:
+        try:
+            from utils.cloud_archive import sync_on_startup
+            sync_on_startup()
+        except Exception as e:
+            logger.debug("[main] 云端同步失败: %s", e)
+        st.session_state["_cloud_synced"] = True
+
     # ── 启动时清理过期归档（>30天） ─────────────────────────────────────
     if "_archive_cleaned" not in st.session_state:
         try:
@@ -458,9 +467,13 @@ def main():
         if _analyses_now - _analyses_saved:
             try:
                 from utils.archive import save_archive
-                save_archive(st.session_state)
+                _saved_file = save_archive(st.session_state)
                 st.session_state["_analyses_saved_keys"] = _analyses_now.copy()
                 st.session_state["_archive_gen"] = st.session_state.get("_archive_gen", 0) + 1
+                # 异步推送到 GitHub
+                if _saved_file:
+                    from utils.cloud_archive import push_file_async
+                    push_file_async(_saved_file)
             except Exception as e:
                 logger.debug("[archive] 归档失败: %s", e)
 
