@@ -312,6 +312,106 @@ def _push_user_file(username: str):
             logger.debug("[cloud] 用户数据推送异常: %s", e)
 
 
+# ══════════════════════════════════════════════════════════════════════════════
+# 玄学炒股缓存同步
+# ══════════════════════════════════════════════════════════════════════════════
+
+MYSTIC_DIR = Path(__file__).parent.parent / "data" / "mystic"
+
+
+def push_mystic_async(today_key: str):
+    """异步推送玄学缓存到 GitHub"""
+    t = threading.Thread(target=_push_mystic_file, args=(today_key,), daemon=True)
+    t.start()
+
+
+def _push_mystic_file(today_key: str):
+    """推送单个玄学缓存到 data-archive 分支"""
+    import requests
+
+    cfg = _get_config()
+    token, repo, branch = cfg["token"], cfg["repo"], cfg["branch"]
+    if not token:
+        return
+
+    filepath = MYSTIC_DIR / f"{today_key}.json"
+    if not filepath.exists():
+        return
+
+    with _sync_lock:
+        try:
+            if not _ensure_branch(token, repo, branch):
+                return
+
+            api = f"https://api.github.com/repos/{repo}"
+            h = _headers(token)
+            path_in_repo = f"data/mystic/{today_key}.json"
+            content_b64 = base64.b64encode(filepath.read_bytes()).decode()
+
+            r_get = requests.get(
+                f"{api}/contents/{path_in_repo}?ref={branch}",
+                headers=h, timeout=15,
+            )
+            payload = {
+                "message": f"mystic: {today_key}",
+                "content": content_b64,
+                "branch": branch,
+            }
+            if r_get.status_code == 200:
+                existing_content = r_get.json().get("content", "").replace("\n", "")
+                if existing_content == content_b64:
+                    return
+                payload["sha"] = r_get.json().get("sha", "")
+
+            r_put = requests.put(
+                f"{api}/contents/{path_in_repo}",
+                headers=h, timeout=30,
+                json=payload,
+            )
+            if r_put.status_code in (200, 201):
+                logger.debug("[cloud] 已推送玄学缓存 %s", today_key)
+            else:
+                logger.warning("[cloud] 玄学缓存推送失败: %s", r_put.status_code)
+        except Exception as e:
+            logger.debug("[cloud] 玄学缓存推送异常: %s", e)
+
+
+def pull_mystic(today_key: str) -> bool:
+    """从 GitHub 拉取今日玄学缓存（本地未命中时调用）"""
+    import requests
+
+    cfg = _get_config()
+    token, repo, branch = cfg["token"], cfg["repo"], cfg["branch"]
+    if not token:
+        return False
+
+    try:
+        api = f"https://api.github.com/repos/{repo}"
+        h = _headers(token)
+        path_in_repo = f"data/mystic/{today_key}.json"
+
+        r = requests.get(
+            f"{api}/contents/{path_in_repo}?ref={branch}",
+            headers=h, timeout=15,
+        )
+        if r.status_code != 200:
+            return False
+
+        content = base64.b64decode(r.json()["content"]).decode("utf-8")
+        MYSTIC_DIR.mkdir(parents=True, exist_ok=True)
+        (MYSTIC_DIR / f"{today_key}.json").write_text(content, encoding="utf-8")
+        logger.debug("[cloud] 从 GitHub 恢复玄学缓存: %s", today_key)
+        return True
+    except Exception as e:
+        logger.debug("[cloud] 拉取玄学缓存失败: %s", e)
+        return False
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# user_data 同步（用户数据持久化）
+# ══════════════════════════════════════════════════════════════════════════════
+
+
 def pull_user_data(username: str):
     """从 GitHub 拉取用户数据（启动时 load_user 未找到本地文件时调用）"""
     import requests

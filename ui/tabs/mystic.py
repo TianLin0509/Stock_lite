@@ -51,8 +51,15 @@ def render_mystic_tab(client, cfg, selected_model):
     today_key = now.strftime("%Y-%m-%d")
     weekday = ["星期一", "星期二", "星期三", "星期四", "星期五", "星期六", "星期日"][now.weekday()]
 
-    # ── 优先读取持久缓存 ──────────────────────────────────────
+    # ── 优先读取持久缓存（本地 → GitHub 回退）─────────────────
     cached = _load_cache(today_key)
+    if not cached:
+        try:
+            from utils.cloud_archive import pull_mystic
+            if pull_mystic(today_key):
+                cached = _load_cache(today_key)
+        except Exception:
+            pass
     if cached:
         _by_user = cached.get("username", "未知")
         _by_model = cached.get("model", "")
@@ -148,7 +155,12 @@ def render_mystic_tab(client, cfg, selected_model):
         time.sleep(0.3)
         status.update(label="🔮 今日运势已揭晓！", state="complete")
 
-    # 持久化到磁盘
+    # 持久化到磁盘 + 推送 GitHub
     _save_cache(today_key, result, username, selected_model)
+    try:
+        from utils.cloud_archive import push_mystic_async
+        push_mystic_async(today_key)
+    except Exception:
+        pass
     st.session_state["_mystic_result"] = {"date": today_str, "content": result}
     st.rerun()
