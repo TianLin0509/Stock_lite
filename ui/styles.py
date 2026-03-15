@@ -137,8 +137,9 @@ html, body, [data-testid="stAppViewContainer"] {
   font-family: 'Noto Sans SC', 'PingFang SC', -apple-system, sans-serif;
   color: var(--text);
 }
-/* 避免 Streamlit 顶部 header 遮挡页面内容 */
-.block-container { padding-top: 2.5rem !important; }
+/* 避免 Streamlit 顶部固定 header 遮挡页面内容 */
+[data-testid="stHeader"] { background: transparent !important; }
+.block-container { padding-top: 3rem !important; }
 [data-testid="stSidebar"] {
   background: #ffffff !important;
   border-right: 1px solid var(--border) !important;
@@ -386,9 +387,9 @@ hr { border-color: var(--border) !important; margin: 1rem 0 !important; }
 
 @media (max-width: 768px) {
 
-  /* ── 全局：更紧凑的间距 ── */
+  /* ── 全局：更紧凑的间距（保留顶部空间避免遮挡） ── */
   .block-container {
-    padding: 0.5rem 0.8rem !important;
+    padding: 3rem 0.8rem 0.5rem !important;
   }
 
   /* ── 全局文本：防止长串溢出 ── */
@@ -678,7 +679,7 @@ hr { border-color: var(--border) !important; margin: 1rem 0 !important; }
   .app-header h1 { font-size: 1.1rem; }
   .app-header p { font-size: 0.68rem; }
   .app-header { padding: 0.75rem 0.9rem; }
-  .block-container { padding: 0.3rem 0.5rem !important; }
+  .block-container { padding: 3rem 0.5rem 0.3rem !important; }
 
   .stTabs [data-baseweb="tab"] {
     font-size: 0.68rem !important;
