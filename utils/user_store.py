@@ -45,19 +45,20 @@ def load_user(username: str) -> dict:
                 return json.loads(path.read_text(encoding="utf-8"))
             except (json.JSONDecodeError, OSError):
                 pass
-    # 本地没有，尝试从 GitHub 云端拉取
-    try:
-        from utils.cloud_archive import pull_user_data
-        if pull_user_data(username):
-            with lock:
-                if path.exists():
-                    try:
-                        return json.loads(path.read_text(encoding="utf-8"))
-                    except (json.JSONDecodeError, OSError):
-                        pass
-    except Exception:
-        pass
+    # 本地没有，先返回默认数据让用户立即进入，后台异步拉取云端数据
+    _pull_user_data_bg(username)
     return _default_user(username)
+
+
+def _pull_user_data_bg(username: str):
+    """后台拉取云端用户数据，拉到后写入本地，下次 rerun 自动生效"""
+    def _do():
+        try:
+            from utils.cloud_archive import pull_user_data
+            pull_user_data(username)
+        except Exception:
+            pass
+    threading.Thread(target=_do, daemon=True).start()
 
 
 def save_user(data: dict):
