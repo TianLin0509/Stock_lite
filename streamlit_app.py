@@ -325,7 +325,8 @@ def main():
                    "similarity_results", "_show_sim",
                    "active_view", "_auto_sim", "_jobs",
                    "_analyses_saved_keys", "_last_archive", "_last_archive_file",
-                   "_shared_from", "_archive_lookup"]:
+                   "_shared_from", "_archive_lookup",
+                   "_history_saved_this_stock"]:
             st.session_state.pop(k, None)
         for k in list(st.session_state.keys()):
             if k.startswith("_confirm_redo_"):
@@ -476,6 +477,11 @@ def main():
                     push_file_async(_saved_file)
             except Exception as e:
                 logger.debug("[archive] 归档失败: %s", e)
+
+            # 同步写入用户历史（分析完成或缓存加载后立即记录）
+            if not st.session_state.get("_history_saved_this_stock"):
+                _save_analysis_to_history()
+                st.session_state["_history_saved_this_stock"] = True
 
 
 if __name__ == "__main__":
