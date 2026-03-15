@@ -1,28 +1,80 @@
-"""Tab: 🔮 玄学炒股 — 今日运势占卜"""
+"""Tab: 🔮 玄学炒股 — 今日运势占卜（持久缓存，跨用户共享）"""
 
+import json
 import time
 import streamlit as st
+from pathlib import Path
+from datetime import datetime
+
+MYSTIC_DIR = Path(__file__).parent.parent.parent / "data" / "mystic"
+
+
+def _load_cache(today_key: str) -> dict | None:
+    """从磁盘读取今日缓存"""
+    cache_file = MYSTIC_DIR / f"{today_key}.json"
+    if cache_file.exists():
+        try:
+            return json.loads(cache_file.read_text(encoding="utf-8"))
+        except Exception:
+            pass
+    return None
+
+
+def _save_cache(today_key: str, content: str, username: str, model: str):
+    """保存到磁盘"""
+    MYSTIC_DIR.mkdir(parents=True, exist_ok=True)
+    record = {
+        "date": today_key,
+        "content": content,
+        "username": username,
+        "model": model,
+        "created_at": datetime.now().isoformat(timespec="seconds"),
+    }
+    cache_file = MYSTIC_DIR / f"{today_key}.json"
+    cache_file.write_text(
+        json.dumps(record, ensure_ascii=False, indent=2), encoding="utf-8",
+    )
+    return record
 
 
 def render_mystic_tab(client, cfg, selected_model):
     """渲染玄学炒股 Tab"""
-    from datetime import datetime
     from ai.client import call_ai, get_ai_client
 
-    # 重新获取 client 以确保最新状态
     client_m, cfg_m, _ = get_ai_client(selected_model)
 
     st.markdown("---")
     st.markdown("#### 🔮 玄学炒股 · 今日运势")
 
-    today_str = datetime.now().strftime("%Y年%m月%d日")
-    weekday = ["星期一", "星期二", "星期三", "星期四", "星期五", "星期六", "星期日"][datetime.now().weekday()]
+    now = datetime.now()
+    today_str = now.strftime("%Y年%m月%d日")
+    today_key = now.strftime("%Y-%m-%d")
+    weekday = ["星期一", "星期二", "星期三", "星期四", "星期五", "星期六", "星期日"][now.weekday()]
 
-    cached = st.session_state.get("_mystic_result", {})
-    if cached.get("date") == today_str:
+    # ── 优先读取持久缓存 ──────────────────────────────────────
+    cached = _load_cache(today_key)
+    if cached:
+        _by_user = cached.get("username", "未知")
+        _by_model = cached.get("model", "")
+        _by_time = cached.get("created_at", "")[:16].replace("T", " ")
+        st.markdown(
+            f'<div style="padding:6px 14px;background:linear-gradient(135deg,#faf5ff,#fff7ed);'
+            f'border-radius:8px;border:1px solid #e9d5ff;margin-bottom:12px;'
+            f'font-size:0.82rem;color:#7c3aed;">'
+            f'🔮 今日运势由 <strong>{_by_user}</strong> 于 {_by_time} 使用 {_by_model} 推演'
+            f'</div>',
+            unsafe_allow_html=True,
+        )
         st.markdown(cached["content"])
+
+        # 允许重新推演
+        if st.button("🔄 重新推演今日运势", key="redo_mystic"):
+            (MYSTIC_DIR / f"{today_key}.json").unlink(missing_ok=True)
+            st.session_state.pop("_mystic_result", None)
+            st.rerun()
         return
 
+    # ── 无缓存，需要 AI 生成 ──────────────────────────────────
     if not client_m:
         st.warning("请先在左侧配置 AI 模型")
         return
@@ -83,8 +135,9 @@ def render_mystic_tab(client, cfg, selected_model):
             "古典与现代混搭。请联网搜索今天的真实黄历数据来增强可信度。"
         )
 
+        username = st.session_state.get("current_user", "匿名")
         result, err = call_ai(client_m, cfg_m, prompt, system=system, max_tokens=4000,
-                              username=st.session_state.get("current_user", ""))
+                              username=username)
 
         if err:
             status.update(label="❌ 卦象推演失败", state="error")
@@ -95,5 +148,7 @@ def render_mystic_tab(client, cfg, selected_model):
         time.sleep(0.3)
         status.update(label="🔮 今日运势已揭晓！", state="complete")
 
+    # 持久化到磁盘
+    _save_cache(today_key, result, username, selected_model)
     st.session_state["_mystic_result"] = {"date": today_str, "content": result}
-    st.markdown(result)
+    st.rerun()
