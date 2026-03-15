@@ -1,0 +1,11 @@
+# A股智能投研助手 v3 依赖清单
+# 安装：pip install -r requirements.txt
+
+streamlit>=1.36.0     # 需要 st.write_stream + st.container(border=True)
+openai>=1.30.0        # 统一调用 Qwen / 智谱 / 豆包 / DeepSeek（OpenAI兼容接口）
+tushare>=1.4.0
+akshare>=1.14.0       # Tushare 不可用时的备用数据源
+numpy>=1.24.0
+pandas>=2.0.0
+plotly>=5.18.0
+requests>=2.31.0

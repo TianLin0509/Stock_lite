@@ -1,0 +1,24 @@
+# API Keys — 绝对不能提交！
+.streamlit/secrets.toml
+secrets.toml
+
+# Python
+__pycache__/
+*.pyc
+.env
+
+# IDE
+.vscode/
+.idea/
+
+# Large data files (junction-linked from Stock_test)
+data/history/
+
+# User data (JSON persistence, not for git)
+user_data/*.json
+
+# Analysis archive (full text, for backtesting)
+data/archive/
+
+# Logs
+logs/
