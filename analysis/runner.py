@@ -104,7 +104,7 @@ def run_analysis_sync(key, client, cfg, model_name, name, tscode, info, fin, df,
     """
     # 分析调度表：key → (label, build_fn, build_args)
     dispatch = {
-        "expectation":  ("预期差分析", build_expectation_prompt, (name, tscode, info)),
+        "expectation":  ("预期差分析", build_expectation_prompt, (name, tscode, info, fin, df)),
         "trend":        ("K线趋势研判", _build_trend, (name, tscode, df)),
         "fundamentals": ("基本面剖析", build_fundamentals_prompt, (name, tscode, info, fin)),
         "sentiment":    ("舆情情绪分析", build_sentiment_prompt, (name, tscode, info)),
