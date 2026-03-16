@@ -345,7 +345,9 @@ def main():
                    "_analyses_saved_keys", "_last_archive", "_last_archive_file",
                    "_shared_from", "_archive_lookup",
                    "_history_saved_this_stock",
-                   "report_summary", "report_scores"]:
+                   "report_summary", "report_scores",
+                   "blue_team_report", "final_verdict", "final_scores",
+                   "_pending_blue_team", "_pending_verdict"]:
             st.session_state.pop(k, None)
         for k in list(st.session_state.keys()):
             if k.startswith("_confirm_redo_"):

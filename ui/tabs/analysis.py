@@ -95,6 +95,9 @@ def render_analysis_tab(client, cfg_now, selected_model):
             st.session_state.pop("report_scores", None)
             st.session_state.pop("similarity_results", None)
             st.session_state.pop("_analyses_saved_keys", None)
+            st.session_state.pop("blue_team_report", None)
+            st.session_state.pop("final_verdict", None)
+            st.session_state.pop("final_scores", None)
             st.session_state["_pending_comprehensive"] = True
             st.rerun()
 
@@ -119,9 +122,14 @@ def render_analysis_tab(client, cfg_now, selected_model):
             _recent_data = load_archive(_recent["file"])
             if _recent_data and _recent_data.get("analyses"):
                 st.session_state["analyses"] = _recent_data["analyses"]
-                # 恢复 report_summary
                 if _recent_data.get("report_summary"):
                     st.session_state["report_summary"] = _recent_data["report_summary"]
+                if _recent_data.get("blue_team_report"):
+                    st.session_state["blue_team_report"] = _recent_data["blue_team_report"]
+                if _recent_data.get("final_verdict"):
+                    st.session_state["final_verdict"] = _recent_data["final_verdict"]
+                if _recent_data.get("final_scores"):
+                    st.session_state["final_scores"] = _recent_data["final_scores"]
                 _ts_short = _recent.get("ts", "")[11:16]
                 _from_user = _recent.get("username", "")
                 st.session_state["_shared_from"] = (
@@ -153,6 +161,12 @@ def render_analysis_tab(client, cfg_now, selected_model):
                         st.session_state["analyses"] = _arch_data.get("analyses", {})
                         if _arch_data.get("report_summary"):
                             st.session_state["report_summary"] = _arch_data["report_summary"]
+                        if _arch_data.get("blue_team_report"):
+                            st.session_state["blue_team_report"] = _arch_data["blue_team_report"]
+                        if _arch_data.get("final_verdict"):
+                            st.session_state["final_verdict"] = _arch_data["final_verdict"]
+                        if _arch_data.get("final_scores"):
+                            st.session_state["final_scores"] = _arch_data["final_scores"]
                         st.session_state["_shared_from"] = (
                             f"{sh['username']} · {sh.get('model', '')} · {_ts_short}"
                         )
@@ -190,14 +204,13 @@ def render_analysis_tab(client, cfg_now, selected_model):
                 st.caption("📊 执行摘要")
                 st.markdown(summary)
 
-        # 五维雷达
+        # 四维雷达
         from ui.results import render_radar_section_5d
         render_radar_section_5d()
 
-        # 完整报告折叠
-        name = st.session_state.get("stock_name", "")
-        with st.expander(f"📋 {name} · 综合投研报告全文", expanded=False):
-            st.markdown(analyses["comprehensive"])
+        # 红蓝军对决区域（Tab切换：红军报告 / 蓝军挑战 / 终审裁决）
+        from ui.challenge import render_challenge_section
+        render_challenge_section(client, cfg_now, selected_model)
 
     # ── 向后兼容：旧三模块结果 ────────────────────────────────────
     elif _has_old_three_modules(analyses):

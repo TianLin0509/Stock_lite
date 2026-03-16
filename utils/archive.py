@@ -217,6 +217,9 @@ def save_archive(session_state: dict):
         "analyses_validated": valid_keys,
         "moe_results": moe_data,
         "report_summary": session_state.get("report_summary", ""),
+        "blue_team_report": session_state.get("blue_team_report", ""),
+        "final_verdict": session_state.get("final_verdict", ""),
+        "final_scores": session_state.get("final_scores"),
     }
 
     # 写入归档文件
