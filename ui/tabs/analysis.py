@@ -199,7 +199,7 @@ def render_analysis_tab(client, cfg_now, selected_model):
     if has_comprehensive:
         # 显示执行摘要
         summary = st.session_state.get("report_summary", "")
-        if summary and "未返回内容" not in summary and "失败" not in summary:
+        if summary and len(summary) > 20:
             with st.container(border=True):
                 st.caption("📊 执行摘要")
                 st.markdown(summary)

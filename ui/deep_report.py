@@ -281,13 +281,15 @@ def run_deep_report(client, cfg, selected_model, username):
         summary_text = f"摘要生成失败：{summary_err}"
 
     # 填充摘要占位符
-    if summary_text and "未返回内容" not in summary_text and "失败" not in summary_text:
+    if summary_text and len(summary_text) > 20:
         with summary_placeholder.container():
             with st.container(border=True):
                 st.caption("📊 执行摘要")
                 st.markdown(summary_text)
     else:
         summary_placeholder.empty()
+        if summary_err:
+            st.warning(f"摘要生成异常：{summary_err}")
 
     # ── 7. 存入 session_state ─────────────────────────────────────
     analyses = st.session_state.get("analyses", {})
