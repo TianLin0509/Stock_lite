@@ -2,7 +2,6 @@
 
 import streamlit as st
 
-from config import CORE_KEYS
 from analysis.runner import run_moe_sync
 from ui.results import _render_moe_results
 
@@ -23,27 +22,11 @@ def render_moe_tab(client, cfg_now, selected_model):
         st.caption("六方会谈需要综合投研报告或核心三项分析结果作为辩论素材")
     elif not _core_done_moe:
         st.markdown("#### 🎯 六方会谈 · 多角色辩论裁决")
-        if analyses.get("comprehensive"):
-            _progress_text = "✅ 综合报告"
-        else:
-            _done_labels = []
-            _missing_labels = []
-            _lbl = {"comprehensive": "综合报告", "expectation": "预期差",
-                     "trend": "趋势解读", "fundamentals": "基本面"}
-            for k in ["comprehensive", "expectation", "trend", "fundamentals"]:
-                if analyses.get(k):
-                    _done_labels.append(f"✅ {_lbl[k]}")
-                else:
-                    _missing_labels.append(_lbl[k])
-            _progress_text = " &nbsp;|&nbsp; ".join(_done_labels)
-            if _missing_labels:
-                _progress_text += f" &nbsp;|&nbsp; ⬜ {'、'.join(_missing_labels)}"
         st.markdown(
-            f'<div style="padding:1rem;background:linear-gradient(135deg,#faf5ff,#eff6ff);'
-            f'border-radius:10px;border:1px solid #c4b5fd;text-align:center;">'
-            f'<div style="font-size:0.95rem;color:#6b7280;margin-bottom:8px;">'
-            f'完成综合报告或核心三项分析后即可启动六方会谈</div>'
-            f'<div style="font-size:0.85rem;">{_progress_text}</div></div>',
+            '<div style="padding:1rem;background:linear-gradient(135deg,#faf5ff,#eff6ff);'
+            'border-radius:10px;border:1px solid #c4b5fd;text-align:center;">'
+            '<div style="font-size:0.95rem;color:#6b7280;">'
+            '请先完成「一键分析」生成综合报告后即可启动六方会谈</div></div>',
             unsafe_allow_html=True,
         )
     else:

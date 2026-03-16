@@ -62,14 +62,43 @@ def extract_recommendation(archive: dict) -> dict:
                     "source": "moe",
                 }
 
-    # 从各模块分析中综合判断
+    # 从分析文本中综合判断
     analyses = archive.get("analyses", {})
+
+    # 优先从 comprehensive 报告提取（新版深度报告）
+    comp_text = analyses.get("comprehensive", "")
+    if comp_text:
+        # comprehensive 报告包含"操作评级"字段，直接匹配
+        for pattern, label in _RATING_PATTERNS:
+            # 在结论部分搜索（最后 2000 字）
+            tail = comp_text[-2000:]
+            if re.search(pattern, tail):
+                direction = "bullish" if label in ("强烈买入", "买入", "谨慎介入") \
+                    else "bearish" if label in ("减持", "回避") \
+                    else "neutral"
+                return {
+                    "rating": label,
+                    "direction": direction,
+                    "confidence": 70,
+                    "source": "comprehensive",
+                }
+        # 兜底：用多空信号词从 comprehensive 结论部分判断
+        tail = comp_text[-1500:]
+        b = sum(1 for w in _BULLISH_WORDS if w in tail)
+        s = sum(1 for w in _BEARISH_WORDS if w in tail)
+        if b > s:
+            return {"rating": "谨慎介入", "direction": "bullish",
+                    "confidence": 50, "source": "comprehensive"}
+        elif s > b:
+            return {"rating": "观望", "direction": "bearish",
+                    "confidence": 50, "source": "comprehensive"}
+
+    # 从旧版三模块分析中综合判断
     bull_count, bear_count = 0, 0
     for key in ["expectation", "trend", "fundamentals"]:
         text = analyses.get(key, "")
         if not text:
             continue
-        # 取最后 500 字（结论部分）
         tail = text[-500:]
         b = sum(1 for w in _BULLISH_WORDS if w in tail)
         s = sum(1 for w in _BEARISH_WORDS if w in tail)
