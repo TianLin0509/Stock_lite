@@ -38,19 +38,33 @@ def _extract_text(data: dict) -> str:
     return ""
 
 
-def doubao_call(cfg, messages, max_tokens) -> tuple[str, str | None]:
-    """豆包非流式 responses API 调用"""
+def doubao_call(cfg, messages, max_tokens, _retry=0) -> tuple[str, str | None]:
+    """豆包非流式 responses API 调用（含自动重试）"""
+    import time as _time
     url, headers, body = _build_request(cfg, messages, max_tokens, stream=False)
     try:
         resp = requests.post(url, headers=headers, json=body, timeout=180)
         resp.encoding = "utf-8"
         if resp.status_code != 200:
+            # 429/503 → 重试一次
+            if resp.status_code in (429, 503) and _retry < 2:
+                _time.sleep(2 + _retry * 2)
+                return doubao_call(cfg, messages, max_tokens, _retry=_retry + 1)
             return "", f"豆包 API 错误 {resp.status_code}：{resp.text[:200]}"
         data = resp.json()
         text = _extract_text(data)
-        return text or "（豆包未返回内容）", None
+        if not text and _retry < 2:
+            # 空响应 → 重试（豆包并发时偶发）
+            _time.sleep(1 + _retry)
+            return doubao_call(cfg, messages, max_tokens, _retry=_retry + 1)
+        return text or "", ("豆包返回空内容（已重试）" if not text else None)
     except requests.exceptions.Timeout:
         return "", "豆包 API 请求超时，请稍后重试"
+    except requests.exceptions.ConnectionError as e:
+        if _retry < 2:
+            _time.sleep(2)
+            return doubao_call(cfg, messages, max_tokens, _retry=_retry + 1)
+        return "", f"豆包连接失败：{str(e)[:120]}"
     except Exception as e:
         return "", f"豆包调用异常：{str(e)[:120]}"
 

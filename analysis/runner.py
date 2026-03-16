@@ -156,22 +156,23 @@ def run_analysis_sync(key, client, cfg, model_name, name, tscode, info, fin, df,
 
 def run_moe_sync(client, cfg, model_name, name, tscode, analyses,
                  username="", progress_cb=None):
-    """同步 MoE 辩论：返回 (moe_data, error)
+    """同步 MoE 辩论（串行调用，避免豆包并发空响应）
 
     moe_data = {"roles": {...}, "ceo": "...", "done": True}
     """
-    from concurrent.futures import ThreadPoolExecutor, as_completed
     from analysis.moe import MOE_ROLES, CEO_SYSTEM
     code6 = to_code6(tscode)
 
     try:
         if progress_cb:
-            progress_cb("📋 汇总预期差、趋势、基本面三项分析结果...")
+            progress_cb("📋 汇总分析结果作为辩论素材...")
         context = build_analysis_context(analyses)
-        if progress_cb:
-            progress_cb("🏟️ 召集五方专家并行发表观点...")
 
-        def _call_role(role):
+        role_results = {}
+        for idx, role in enumerate(MOE_ROLES, 1):
+            if progress_cb:
+                progress_cb(f"🎙️ [{idx}/{len(MOE_ROLES)}] {role['badge']} 正在发表观点...")
+
             prompt = f"""辩论标的：{name}（{code6}）
 
 ## 分析背景
@@ -194,18 +195,9 @@ def run_moe_sync(client, cfg, model_name, name, tscode, analyses,
                                 username=username)
             if err:
                 text = f"⚠️ 该角色分析失败：{err}"
-            return role, text
-
-        role_results = {}
-        with ThreadPoolExecutor(max_workers=5) as pool:
-            futs = {pool.submit(_call_role, role): role for role in MOE_ROLES}
-            done_count = 0
-            for fut in as_completed(futs):
-                role, text = fut.result()
-                role_results[role["key"]] = text
-                done_count += 1
-                if progress_cb:
-                    progress_cb(f"  ✓ [{done_count}/{len(MOE_ROLES)}] {role['badge']} 观点已提交")
+            role_results[role["key"]] = text
+            if progress_cb:
+                progress_cb(f"  ✓ {role['badge']} 观点已提交")
 
         if progress_cb:
             progress_cb("👔 首席执行官正在综合五方观点，做最终裁决...")
@@ -261,7 +253,7 @@ def run_moe_sync(client, cfg, model_name, name, tscode, analyses,
             ceo_text = f"⚠️ CEO裁决生成失败：{ceo_err}\n\n建议切换其他模型后重新尝试。"
 
         if progress_cb:
-            progress_cb("✅ MoE 五方辩论裁决完成！")
+            progress_cb("✅ MoE 六方会谈完成！")
 
         moe_data = {"roles": role_results, "ceo": ceo_text, "done": True}
         return moe_data, None
