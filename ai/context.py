@@ -137,6 +137,7 @@ def build_analysis_context(analyses: dict, max_per_module: int = 40,
     parts = []
 
     module_map = {
+        "comprehensive": "综合投研报告",
         "expectation":   "预期差分析",
         "trend":         "趋势研判",
         "fundamentals":  "基本面剖析",

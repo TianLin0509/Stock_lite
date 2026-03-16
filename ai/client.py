@@ -98,6 +98,87 @@ def _build_extra(cfg: dict) -> dict:
     return extra
 
 
+class StreamResult:
+    """流式输出结果容器 — 可迭代，完成后获取 full_text"""
+
+    def __init__(self, gen):
+        self._gen = gen
+        self.full_text = ""
+        self.error = None
+
+    def __iter__(self):
+        try:
+            for chunk in self._gen:
+                self.full_text += chunk
+                yield chunk
+        except Exception as e:
+            self.error = str(e)
+            yield f"\n\n⚠️ 流式输出异常：{str(e)[:120]}"
+
+
+def call_ai_stream(client: OpenAI, cfg: dict, prompt: str,
+                   system: str = "", max_tokens: int = 12000,
+                   username: str = ""):
+    """
+    流式调用 AI 模型，yield 文本片段。
+    返回 StreamResult 对象（可迭代 + full_text 属性）。
+    """
+    messages = _build_messages(prompt, system)
+
+    def _generate():
+        nonlocal messages
+
+        # 豆包走流式 responses API
+        if cfg.get("provider") == "doubao" and cfg.get("supports_search"):
+            from ai.doubao import doubao_stream
+            full = ""
+            for chunk in doubao_stream(cfg, messages, max_tokens):
+                full += chunk
+                yield chunk
+            # 粗估 token
+            est = int((len(prompt) + len(full)) * 1.5)
+            add_tokens(total_tokens=est, username=username)
+            return
+
+        # 其他 provider 走 chat.completions stream
+        extra = _build_extra(cfg)
+        try:
+            stream = client.chat.completions.create(
+                model=cfg["model"],
+                messages=messages,
+                max_tokens=max_tokens,
+                stream=True,
+                **extra,
+            )
+            full = ""
+            for chunk in stream:
+                if chunk.choices and chunk.choices[0].delta.content:
+                    text = chunk.choices[0].delta.content
+                    full += text
+                    yield text
+
+            # 流结束后粗估 token
+            est_prompt = int(len(prompt) * 1.5)
+            est_completion = int(len(full) * 1.5)
+            add_tokens(
+                prompt_tokens=est_prompt,
+                completion_tokens=est_completion,
+                total_tokens=est_prompt + est_completion,
+                username=username,
+            )
+
+        except AuthenticationError as e:
+            yield f"\n\n⚠️ API Key 认证失败：{str(e)[:200]}"
+        except RateLimitError as e:
+            yield f"\n\n⚠️ 调用频率超限，请稍后重试"
+        except APIConnectionError as e:
+            yield f"\n\n⚠️ 网络连接失败：{e}"
+        except Exception as e:
+            yield f"\n\n⚠️ AI 流式调用异常：{str(e)[:120]}"
+
+    return StreamResult(_generate())
+
+
 def call_ai(client: OpenAI, cfg: dict, prompt: str,
             system: str = "", max_tokens: int = 8000,
             username: str = "") -> tuple[str, str | None]:

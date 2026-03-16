@@ -141,6 +141,92 @@ def render_radar_section():
 
 
 
+def render_radar_section_5d():
+    """渲染五维综合投研雷达仪表盘（综合报告完成后调用）"""
+    from analysis.signal import compute_signal_5d
+    from ui.charts import render_radar_5d
+
+    signal = compute_signal_5d(st.session_state)
+    if not signal:
+        return
+
+    name = st.session_state.get("stock_name", "")
+    st.markdown(f"#### 🎯 {name} · 五维投研雷达")
+
+    # 致命缺陷警告
+    if signal.get("fatal_flaw"):
+        st.markdown(f"""<div class="status-banner warn">
+  🚨 <strong>致命缺陷</strong> — {signal['fatal_flaw']}，综合评分已封顶。
+</div>""", unsafe_allow_html=True)
+
+    # 共振提示
+    if signal["resonance"]:
+        st.markdown("""<div class="status-banner success">
+  🔥 <strong>五维共振信号</strong> — 基本面、预期差、技术、资金、舆情五维均达标（≥75），高置信度关注！
+</div>""", unsafe_allow_html=True)
+
+    col_radar, col_scores = st.columns([3, 2])
+    with col_radar:
+        render_radar_5d(signal)
+    with col_scores:
+        for dim_name, dim_key, dim_icon in [
+            ("基本面", "fundamental", "📋"),
+            ("预期差", "expectation", "🔍"),
+            ("技术面", "technical", "📈"),
+            ("资金面", "capital", "💰"),
+            ("舆情情绪", "sentiment", "📣"),
+        ]:
+            dim_score = signal[dim_key]
+            color = "#16a34a" if dim_score >= 70 else "#f59e0b" if dim_score >= 50 else "#ef4444"
+            st.markdown(
+                f'<div style="margin-bottom:0.7rem;">'
+                f'<div style="font-size:0.8rem;color:#6b7280;margin-bottom:2px;">'
+                f'{dim_icon} {dim_name}</div>'
+                f'<div style="display:flex;align-items:center;gap:8px;">'
+                f'<div style="flex:1;background:#f1f5f9;border-radius:6px;height:8px;overflow:hidden;">'
+                f'<div style="width:{dim_score}%;height:100%;background:{color};'
+                f'border-radius:6px;"></div></div>'
+                f'<span style="font-size:0.9rem;font-weight:700;color:{color};'
+                f'min-width:36px;text-align:right;">{dim_score}</span>'
+                f'</div></div>',
+                unsafe_allow_html=True,
+            )
+
+        # 综合评分
+        composite = signal["composite"]
+        verdict_color = "#16a34a" if signal["resonance"] else \
+                       "#f59e0b" if composite >= 60 else "#ef4444"
+        st.markdown(
+            f'<div style="margin-top:0.8rem;padding:0.7rem;'
+            f'background:linear-gradient(135deg,#faf5ff,#fdf2f8);'
+            f'border-radius:10px;border:1px solid #d8b4fe;text-align:center;">'
+            f'<div style="font-size:0.75rem;color:#9ca3af;">综合评分</div>'
+            f'<div style="font-size:1.6rem;font-weight:800;color:{verdict_color};">'
+            f'{composite}</div>'
+            f'<div style="font-size:0.82rem;font-weight:600;color:{verdict_color};">'
+            f'{signal["verdict"]}</div></div>',
+            unsafe_allow_html=True,
+        )
+
+        # 短线攻击力 + 中线安全垫
+        stp = signal.get("short_term_power", 0)
+        mts = signal.get("mid_term_safety", 0)
+        stp_color = "#16a34a" if stp >= 70 else "#f59e0b" if stp >= 50 else "#ef4444"
+        mts_color = "#16a34a" if mts >= 70 else "#f59e0b" if mts >= 50 else "#ef4444"
+        st.markdown(
+            f'<div style="display:flex;gap:8px;margin-top:8px;">'
+            f'<div style="flex:1;padding:6px;background:#f8fafc;border-radius:8px;text-align:center;">'
+            f'<div style="font-size:0.7rem;color:#9ca3af;">短线攻击力</div>'
+            f'<div style="font-size:1.1rem;font-weight:700;color:{stp_color};">{stp}</div></div>'
+            f'<div style="flex:1;padding:6px;background:#f8fafc;border-radius:8px;text-align:center;">'
+            f'<div style="font-size:0.7rem;color:#9ca3af;">中线安全垫</div>'
+            f'<div style="font-size:1.1rem;font-weight:700;color:{mts_color};">{mts}</div></div>'
+            f'</div>',
+            unsafe_allow_html=True,
+        )
+    st.markdown("---")
+
+
 # ══════════════════════════════════════════════════════════════════════════════
 # K线相似走势匹配
 # ══════════════════════════════════════════════════════════════════════════════

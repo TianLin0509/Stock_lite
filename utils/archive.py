@@ -66,6 +66,12 @@ def _add_to_index_cache(entry: dict):
 
 # 每种分析类型的"裁决段标志"——必须在末尾500字内命中至少一个
 _VERDICT_MARKERS = {
+    "comprehensive": [
+        r"<<<END_SCORES>>>",
+        r"操作评级",
+        r"三情景推演",
+        r"综合研判",
+    ],
     "expectation": [
         r"预期差裁决",
         r"综合评分[：:]\s*\d+\.?\d*\s*/\s*10",
@@ -141,7 +147,7 @@ def save_archive(session_state: dict):
     analyses = session_state.get("analyses", {})
 
     # 只归档通过质量校验的分析
-    valid_keys = [k for k in ["expectation", "trend", "fundamentals",
+    valid_keys = [k for k in ["comprehensive", "expectation", "trend", "fundamentals",
                                "sentiment", "sector", "holders"]
                   if analyses.get(k) and _is_complete(k, analyses[k])]
     if not valid_keys:
@@ -210,6 +216,7 @@ def save_archive(session_state: dict):
         "analyses": {k: analyses[k] for k in valid_keys},
         "analyses_validated": valid_keys,
         "moe_results": moe_data,
+        "report_summary": session_state.get("report_summary", ""),
     }
 
     # 写入归档文件
@@ -406,7 +413,7 @@ def save_standalone(stock_code: str, stock_name: str, model_name: str,
     """独立保存归档（不依赖 session_state，供 Top10 deep_runner 使用）"""
     if not analyses:
         return None
-    valid_keys = [k for k in ["expectation", "trend", "fundamentals",
+    valid_keys = [k for k in ["comprehensive", "expectation", "trend", "fundamentals",
                                "sentiment", "sector", "holders"]
                   if analyses.get(k) and _is_complete(k, analyses[k])]
     if not valid_keys:

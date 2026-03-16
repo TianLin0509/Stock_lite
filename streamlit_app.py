@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-📈 Stock Lite v1.10 — 轻量投研助手
-核心分析：预期差 · K线趋势 · 基本面 | 深度分析：舆情 · 板块 · 股东
+📈 Stock Lite v1.11 — 轻量投研助手
+一键综合投研报告：全量数据 + 五维评分 + 执行摘要
 """
 
 import logging
@@ -35,7 +35,7 @@ import streamlit as st
 
 # ── Page Config ──────────────────────────────────────────────────────────
 st.set_page_config(
-    page_title="Stock Lite v1.10 🌸",
+    page_title="Stock Lite v1.11 🌸",
     page_icon="📈",
     layout="wide",
     initial_sidebar_state="auto",
@@ -57,7 +57,6 @@ from data.tushare_client import (
     get_basic_info, get_price_df, get_financial, get_valuation_history,
 )
 from ai.client import get_ai_client, get_token_usage
-from analysis.runner import run_analysis_sync
 from ui.sidebar import render_sidebar
 from ui.tabs.analysis import render_analysis_tab
 
@@ -78,8 +77,8 @@ def _show_login():
 
     st.markdown("""
 <div class="app-header">
-  <h1>📈 Stock Lite v1.10</h1>
-  <p>预期差挖掘 · K线趋势研判 · 基本面剖析 — 轻量版</p>
+  <h1>📈 Stock Lite v1.11</h1>
+  <p>一键综合投研报告 · 五维评分 · 执行摘要 — 轻量版</p>
 </div>
 """, unsafe_allow_html=True)
 
@@ -117,7 +116,8 @@ def _save_analysis_to_history():
         return
 
     analyses = st.session_state.get("analyses", {})
-    done_keys = [k for k in ALL_ANALYSIS_KEYS[:6] if analyses.get(k)]
+    done_keys = [k for k in ["comprehensive", "expectation", "trend", "fundamentals",
+                              "sentiment", "sector", "holders"] if analyses.get(k)]
     if not done_keys:
         return
 
@@ -129,8 +129,8 @@ def _save_analysis_to_history():
         logger.debug("[_auto_save] 归档失败: %s", e)
 
     parts = []
-    label_map = {"expectation": "预期差", "trend": "趋势", "fundamentals": "基本面",
-                 "sentiment": "舆情", "sector": "板块", "holders": "股东"}
+    label_map = {"comprehensive": "综合报告", "expectation": "预期差", "trend": "趋势",
+                 "fundamentals": "基本面", "sentiment": "舆情", "sector": "板块", "holders": "股东"}
     for k in done_keys:
         text = analyses[k][:80].replace("\n", " ").strip()
         parts.append(f"{label_map.get(k, k)}: {text}")
@@ -219,8 +219,8 @@ def main():
     if not _upper_collapsed:
         st.markdown("""
 <div class="app-header">
-  <h1>📈 Stock Lite v1.10</h1>
-  <p>预期差挖掘 · K线趋势研判 · 基本面剖析 — 轻量版</p>
+  <h1>📈 Stock Lite v1.11</h1>
+  <p>一键综合投研报告 · 五维评分 · 执行摘要 — 轻量版</p>
 </div>
 """, unsafe_allow_html=True)
 
@@ -274,9 +274,8 @@ def main():
         # ══════════════════════════════════════════════════════════════════════
         # 搜索栏 + 开始分析 + 重置（同一行）
         # ══════════════════════════════════════════════════════════════════════
-        _core_all_have = all(
-            st.session_state.get("analyses", {}).get(k)
-            for k in CORE_KEYS
+        _core_all_have = bool(
+            st.session_state.get("analyses", {}).get("comprehensive")
         ) if st.session_state.get("stock_name") else False
 
         if _core_all_have:
@@ -345,7 +344,8 @@ def main():
                    "active_view", "_auto_sim", "_jobs",
                    "_analyses_saved_keys", "_last_archive", "_last_archive_file",
                    "_shared_from", "_archive_lookup",
-                   "_history_saved_this_stock"]:
+                   "_history_saved_this_stock",
+                   "report_summary", "report_scores"]:
             st.session_state.pop(k, None)
         for k in list(st.session_state.keys()):
             if k.startswith("_confirm_redo_"):
@@ -417,6 +417,8 @@ def main():
             if _recent_data and _recent_data.get("analyses"):
                 restored = _recent_data["analyses"]
                 st.session_state["analyses"] = restored
+                if _recent_data.get("report_summary"):
+                    st.session_state["report_summary"] = _recent_data["report_summary"]
                 _ts_short = _recent.get("ts", "")[11:16]
                 _from_user = _recent.get("username", "")
                 st.session_state["_shared_from"] = (
@@ -465,9 +467,8 @@ def main():
                 stock_ready = True
                 analyses = st.session_state.get("analyses", {})
             if client:
-                keys_to_run = [k for k in CORE_KEYS if not analyses.get(k)]
-                if keys_to_run:
-                    st.session_state["_pending_core_analysis"] = True
+                if not analyses.get("comprehensive"):
+                    st.session_state["_pending_comprehensive"] = True
 
             st.session_state["active_view"] = "overview"
             st.session_state["_upper_collapsed"] = True

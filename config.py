@@ -4,9 +4,9 @@ import streamlit as st
 
 # ── 全局常量 ──────────────────────────────────────────────────────────────
 ARCHIVE_CUTOFF_HOUR = 19
-CORE_KEYS = ["expectation", "trend", "fundamentals"]
-DEEP_KEYS = ["sentiment", "sector", "holders"]
-ALL_ANALYSIS_KEYS = CORE_KEYS + DEEP_KEYS
+CORE_KEYS = ["comprehensive"]
+DEEP_KEYS = []
+ALL_ANALYSIS_KEYS = CORE_KEYS
 
 MODEL_CONFIGS = {
     "🟠 Qwen · 通义千问": {

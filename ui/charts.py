@@ -344,6 +344,72 @@ def render_radar(signal: dict) -> None:
                     config={"displayModeBar": False, "responsive": True})
 
 
+def render_radar_5d(signal: dict) -> None:
+    """渲染五维综合投研雷达图"""
+    categories = ["基本面", "预期差", "技术面", "资金面", "舆情情绪"]
+    values = [
+        signal["fundamental"],
+        signal["expectation"],
+        signal["technical"],
+        signal["capital"],
+        signal["sentiment"],
+    ]
+    values_closed = values + [values[0]]
+    categories_closed = categories + [categories[0]]
+
+    ref_line = [75] * 6  # 共振线
+
+    fig = go.Figure()
+
+    fig.add_trace(go.Scatterpolar(
+        r=values_closed,
+        theta=categories_closed,
+        fill="toself",
+        fillcolor="rgba(99,102,241,0.15)",
+        line=dict(color="#6366f1", width=2.5),
+        name="当前评分",
+        marker=dict(size=8, color="#6366f1"),
+    ))
+
+    fig.add_trace(go.Scatterpolar(
+        r=ref_line,
+        theta=categories_closed,
+        fill=None,
+        line=dict(color="#f59e0b", width=1, dash="dot"),
+        name="共振线(75)",
+        marker=dict(size=0),
+    ))
+
+    fig.update_layout(
+        polar=dict(
+            radialaxis=dict(
+                visible=True, range=[0, 100],
+                tickvals=[20, 40, 60, 80, 100],
+                ticktext=["20", "40", "60", "80", "100"],
+                gridcolor="#e8e8e8",
+                tickfont=dict(size=9, color="#999"),
+            ),
+            angularaxis=dict(
+                tickfont=dict(size=12, color=_TEXT, family="'Noto Sans SC',sans-serif"),
+                gridcolor="#e8e8e8",
+            ),
+            bgcolor=_BG,
+        ),
+        template="plotly_white",
+        height=320, autosize=True,
+        paper_bgcolor=_PAPER,
+        margin=dict(t=30, b=10, l=30, r=30),
+        legend=dict(
+            orientation="h", y=-0.05, x=0.5, xanchor="center",
+            font=dict(size=10, color=_TEXT),
+        ),
+        dragmode=False,
+    )
+
+    st.plotly_chart(fig, use_container_width=True,
+                    config={"displayModeBar": False, "responsive": True})
+
+
 # ══════════════════════════════════════════════════════════════════════════════
 # 估值历史分位图
 # ══════════════════════════════════════════════════════════════════════════════
