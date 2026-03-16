@@ -134,7 +134,10 @@ def pull_from_github():
 
 
 def sync_on_startup():
-    """启动时同步（只执行一次，后台线程）"""
+    """启动时双向同步（只执行一次，后台线程）
+    1. 先从 GitHub 拉取缺失文件（云→本地）
+    2. 再把本地有但云端没有的文件推上去（本地→云）
+    """
     global _initial_sync_done
     if _initial_sync_done:
         return
@@ -143,6 +146,7 @@ def sync_on_startup():
         global _initial_sync_done
         try:
             pull_from_github()
+            _push_missing_to_cloud()
         except Exception as e:
             logger.debug("[cloud] 启动同步失败: %s", e)
         finally:
@@ -150,6 +154,54 @@ def sync_on_startup():
 
     t = threading.Thread(target=_do_sync, daemon=True)
     t.start()
+
+
+def _push_missing_to_cloud():
+    """把本地有但云端没有的归档文件推到 GitHub（补漏）"""
+    import requests
+
+    cfg = _get_config()
+    token, repo, branch = cfg["token"], cfg["repo"], cfg["branch"]
+    if not token:
+        return
+
+    api = f"https://api.github.com/repos/{repo}"
+    h = _headers(token)
+
+    # 获取云端文件列表
+    try:
+        r = requests.get(
+            f"{api}/contents/data/archive?ref={branch}",
+            headers=h, timeout=20,
+        )
+        if r.status_code != 200:
+            return
+        remote_names = {item["name"] for item in r.json() if isinstance(item, dict)}
+    except Exception:
+        return
+
+    # 找到本地有但云端没有的
+    ARCHIVE_DIR.mkdir(parents=True, exist_ok=True)
+    local_files = [f for f in ARCHIVE_DIR.iterdir()
+                   if f.is_file() and f.suffix in (".json", ".jsonl")]
+    missing = [f for f in local_files if f.name not in remote_names]
+
+    if not missing:
+        return
+
+    logger.info("[cloud] 发现 %d 个本地文件未上传，开始补推...", len(missing))
+    pushed = 0
+    for f in missing:
+        try:
+            _push_single_file(f.name)
+            pushed += 1
+            if pushed % 5 == 0:
+                _time.sleep(1)  # 避免 GitHub 限流
+        except Exception as e:
+            logger.debug("[cloud] 补推 %s 失败: %s", f.name, e)
+
+    if pushed:
+        logger.info("[cloud] 补推完成，成功 %d/%d", pushed, len(missing))
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -162,8 +214,8 @@ def push_file_async(filename: str):
     t.start()
 
 
-def _push_single_file(filename: str):
-    """推送单个文件到 data-archive 分支"""
+def _push_single_file(filename: str, _retry: int = 0):
+    """推送单个文件到 data-archive 分支（含重试）"""
     import requests
 
     cfg = _get_config()
@@ -210,12 +262,23 @@ def _push_single_file(filename: str):
             )
             if r_put.status_code in (200, 201):
                 logger.debug("[cloud] 已推送 %s", filename)
+            elif r_put.status_code == 409 and _retry < 2:
+                # SHA 冲突（并发更新）→ 重试
+                _time.sleep(1)
+                _push_single_file(filename, _retry=_retry + 1)
+                return
             else:
                 logger.warning("[cloud] 推送 %s 失败: %s", filename, r_put.status_code)
 
             # 同步推送索引文件
             _push_index_file(token, repo, branch)
 
+        except requests.exceptions.ConnectionError:
+            if _retry < 2:
+                _time.sleep(2)
+                _push_single_file(filename, _retry=_retry + 1)
+            else:
+                logger.warning("[cloud] 推送 %s 网络失败（已重试）", filename)
         except Exception as e:
             logger.debug("[cloud] 推送异常: %s", e)
 

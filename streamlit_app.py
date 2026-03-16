@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-📈 Stock Lite v1.11 — 轻量投研助手
+📈 Stock Lite v1.13 — 轻量投研助手
 一键综合投研报告：全量数据 + 五维评分 + 执行摘要
 """
 
@@ -35,7 +35,7 @@ import streamlit as st
 
 # ── Page Config ──────────────────────────────────────────────────────────
 st.set_page_config(
-    page_title="Stock Lite v1.11 🌸",
+    page_title="Stock Lite v1.13 🌸",
     page_icon="📈",
     layout="wide",
     initial_sidebar_state="auto",
@@ -77,7 +77,7 @@ def _show_login():
 
     st.markdown("""
 <div class="app-header">
-  <h1>📈 Stock Lite v1.11</h1>
+  <h1>📈 Stock Lite v1.13</h1>
   <p>一键综合投研报告 · 五维评分 · 执行摘要 — 轻量版</p>
 </div>
 """, unsafe_allow_html=True)
@@ -219,7 +219,7 @@ def main():
     if not _upper_collapsed:
         st.markdown("""
 <div class="app-header">
-  <h1>📈 Stock Lite v1.11</h1>
+  <h1>📈 Stock Lite v1.13</h1>
   <p>一键综合投研报告 · 五维评分 · 执行摘要 — 轻量版</p>
 </div>
 """, unsafe_allow_html=True)
