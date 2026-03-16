@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-📈 Stock Lite v1.09 — 轻量投研助手
+📈 Stock Lite v1.10 — 轻量投研助手
 核心分析：预期差 · K线趋势 · 基本面 | 深度分析：舆情 · 板块 · 股东
 """
 
@@ -35,7 +35,7 @@ import streamlit as st
 
 # ── Page Config ──────────────────────────────────────────────────────────
 st.set_page_config(
-    page_title="Stock Lite v1.09 🌸",
+    page_title="Stock Lite v1.10 🌸",
     page_icon="📈",
     layout="wide",
     initial_sidebar_state="auto",
@@ -78,7 +78,7 @@ def _show_login():
 
     st.markdown("""
 <div class="app-header">
-  <h1>📈 Stock Lite v1.09</h1>
+  <h1>📈 Stock Lite v1.10</h1>
   <p>预期差挖掘 · K线趋势研判 · 基本面剖析 — 轻量版</p>
 </div>
 """, unsafe_allow_html=True)
@@ -219,7 +219,7 @@ def main():
     if not _upper_collapsed:
         st.markdown("""
 <div class="app-header">
-  <h1>📈 Stock Lite v1.09</h1>
+  <h1>📈 Stock Lite v1.10</h1>
   <p>预期差挖掘 · K线趋势研判 · 基本面剖析 — 轻量版</p>
 </div>
 """, unsafe_allow_html=True)

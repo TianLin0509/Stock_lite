@@ -164,3 +164,62 @@ def call_ai(client: OpenAI, cfg: dict, prompt: str,
     return "", f"AI 调用失败（重试耗尽）：{last_err}"
 
 
+def call_ai_chat(client: OpenAI, cfg: dict, messages: list[dict],
+                 max_tokens: int = 4000,
+                 username: str = "") -> tuple[str, str | None]:
+    """
+    多轮对话调用 — 接受完整 messages list（含 system/user/assistant）。
+    复用 call_ai 的重试逻辑和 token 追踪。
+    """
+    # 豆包走 responses API
+    if cfg.get("provider") == "doubao" and cfg.get("supports_search"):
+        text, err = doubao_call(cfg, messages, max_tokens)
+        if not err:
+            est = int(sum(len(m.get("content", "")) for m in messages) * 1.5)
+            est += int(len(text) * 1.5)
+            add_tokens(total_tokens=est, username=username)
+        return text, err
+
+    extra = _build_extra(cfg)
+    last_err = None
+    for attempt in range(_MAX_RETRIES):
+        try:
+            resp = client.chat.completions.create(
+                model=cfg["model"],
+                messages=messages,
+                max_tokens=max_tokens,
+                **extra,
+            )
+            text = resp.choices[0].message.content or ""
+
+            if hasattr(resp, "usage") and resp.usage:
+                add_tokens(
+                    prompt_tokens=resp.usage.prompt_tokens or 0,
+                    completion_tokens=resp.usage.completion_tokens or 0,
+                    total_tokens=resp.usage.total_tokens or 0,
+                    username=username,
+                )
+            return text, None
+
+        except AuthenticationError as e:
+            return "", f"API Key 认证失败：{str(e)[:200]}"
+        except RateLimitError as e:
+            last_err = e
+            if attempt < _MAX_RETRIES - 1:
+                logger.info("[call_ai_chat] RateLimitError, 重试 %d/%d",
+                            attempt + 1, _MAX_RETRIES)
+                _time.sleep(_RETRY_DELAYS[attempt])
+                continue
+            return "", "调用频率或额度超限（已重试3次），请稍后重试或切换其他模型"
+        except APIConnectionError as e:
+            return "", f"网络连接失败：{e}"
+        except Exception as e:
+            err = str(e)
+            if "invalid_api_key" in err.lower() or "401" in err:
+                return "", f"API Key 无效或模型不可用：{err[:200]}"
+            if "quota" in err.lower() or "insufficient" in err.lower():
+                return "", "账户余额不足，请充值或切换模型"
+            if "model_not_found" in err.lower() or "does not exist" in err.lower():
+                return "", f"模型不存在（{cfg['model']}），请联系开发者更新模型名称"
+            return "", f"AI 调用异常：{err[:120]}"
+    return "", f"AI 调用失败（重试耗尽）：{last_err}"
