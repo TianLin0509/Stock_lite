@@ -151,7 +151,7 @@ def render_radar_section_5d():
         return
 
     name = st.session_state.get("stock_name", "")
-    st.markdown(f"#### 🎯 {name} · 五维投研雷达")
+    st.markdown(f"#### 🎯 {name} · 四维投研雷达")
 
     # 致命缺陷警告
     if signal.get("fatal_flaw"):
@@ -162,7 +162,7 @@ def render_radar_section_5d():
     # 共振提示
     if signal["resonance"]:
         st.markdown("""<div class="status-banner success">
-  🔥 <strong>五维共振信号</strong> — 基本面、预期差、技术、资金、舆情五维均达标（≥75），高置信度关注！
+  🔥 <strong>四维共振信号</strong> — 基本面、预期差、技术、资金四维均达标（≥75），高置信度关注！
 </div>""", unsafe_allow_html=True)
 
     col_radar, col_scores = st.columns([3, 2])
@@ -174,7 +174,6 @@ def render_radar_section_5d():
             ("预期差", "expectation", "🔍"),
             ("技术面", "technical", "📈"),
             ("资金面", "capital", "💰"),
-            ("舆情情绪", "sentiment", "📣"),
         ]:
             dim_score = signal[dim_key]
             color = "#16a34a" if dim_score >= 70 else "#f59e0b" if dim_score >= 50 else "#ef4444"

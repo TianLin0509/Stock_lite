@@ -435,26 +435,26 @@ def _extract_report_scores(session_state: dict) -> dict | None:
 
 def compute_signal_5d(session_state: dict) -> dict | None:
     """
-    五维评分 — 基于综合报告的 AI 评分 + 数据驱动评分混合。
+    四维评分（保留函数名兼容）— 基于综合报告 AI 评分 + 数据驱动混合。
 
-    五维：基本面 / 预期差 / 技术面 / 资金面 / 舆情情绪
+    四维：基本面 / 预期差 / 技术面 / 资金面
+    权重：30/25/20/25（默认，可由风格打标调整）
 
     Returns:
-        dict with keys: fundamental, expectation, technical, capital, sentiment,
-                        composite, verdict, resonance,
+        dict with keys: fundamental, expectation, technical, capital,
+                        sentiment(=capital, 兼容), composite, verdict, resonance,
                         short_term_power, mid_term_safety, fatal_flaw
     """
     scores = _extract_report_scores(session_state)
     if not scores:
         return None
 
-    # 映射 AI 评分（0-10 → 0-100）
+    # 映射 AI 评分（0-10 → 0-100），四维
     dim_map = {
         "fundamental": "基本面",
         "expectation": "预期差",
         "technical": "技术面",
         "capital": "资金面",
-        "sentiment": "舆情情绪",
     }
 
     ai_scores = {}
@@ -463,43 +463,39 @@ def compute_signal_5d(session_state: dict) -> dict | None:
         if val is not None:
             ai_scores[key] = min(100, max(0, int(float(val) * 10)))
         else:
-            ai_scores[key] = 50  # 缺失时默认中性
+            ai_scores[key] = 50
 
     # ── 数据驱动评分混合（技术面+资金面）──
     df = session_state.get("price_df", pd.DataFrame())
     data_tech = _compute_technical_from_data(df)
     data_cap = _compute_capital_from_data(session_state)
 
-    # 技术面：60% AI + 40% 数据
     if data_tech is not None:
         ai_scores["technical"] = int(ai_scores["technical"] * 0.6 + data_tech * 0.4)
-    # 资金面：60% AI + 40% 数据
     if data_cap is not None:
         ai_scores["capital"] = int(ai_scores["capital"] * 0.6 + data_cap * 0.4)
 
-    # 限制在 0-100
     for k in ai_scores:
         ai_scores[k] = max(0, min(100, ai_scores[k]))
 
-    # ── 综合评分 ──
-    weights = {"fundamental": 0.25, "expectation": 0.20,
-               "technical": 0.20, "capital": 0.20, "sentiment": 0.15}
+    # ── 综合评分（四维加权）──
+    weights = {"fundamental": 0.30, "expectation": 0.25,
+               "technical": 0.20, "capital": 0.25}
     composite = sum(ai_scores[k] * w for k, w in weights.items())
 
-    # ── 木桶效应修正：最低维度 ≤ 30 → 综合评分封顶 4.0（=40） ──
+    # 木桶修正
     min_dim = min(ai_scores.values())
     if min_dim <= 30:
         composite = min(composite, 40)
 
     composite = round(composite, 1)
 
-    # ── 共振判断：所有 ≥ 75 且没有 ≤ 50 ──
+    # 共振判断
     all_values = list(ai_scores.values())
     resonance = all(s >= 75 for s in all_values) and not any(s <= 50 for s in all_values)
 
-    # ── 综合判定 ──
     if resonance:
-        verdict = "五维共振 — 强烈关注"
+        verdict = "四维共振 — 强烈关注"
     elif composite >= 75:
         verdict = "综合优秀 — 值得关注"
     elif composite >= 60:
@@ -509,21 +505,12 @@ def compute_signal_5d(session_state: dict) -> dict | None:
     else:
         verdict = "条件不足 — 暂时回避"
 
-    # ── 短线攻击力 = 技术 * 0.5 + 资金 * 0.3 + 情绪 * 0.2 ──
-    short_term_power = int(
-        ai_scores["technical"] * 0.5
-        + ai_scores["capital"] * 0.3
-        + ai_scores["sentiment"] * 0.2
-    )
+    # 短线攻击力 = 技术×0.5 + 资金×0.5
+    short_term_power = int(ai_scores["technical"] * 0.5 + ai_scores["capital"] * 0.5)
+    # 中线安全垫 = 基本面×0.5 + 预期差×0.5
+    mid_term_safety = int(ai_scores["fundamental"] * 0.5 + ai_scores["expectation"] * 0.5)
 
-    # ── 中线安全垫 = 基本面 * 0.5 + 预期差 * 0.3 + 资金 * 0.2 ──
-    mid_term_safety = int(
-        ai_scores["fundamental"] * 0.5
-        + ai_scores["expectation"] * 0.3
-        + ai_scores["capital"] * 0.2
-    )
-
-    # ── 致命缺陷检测 ──
+    # 致命缺陷
     fatal_flaw = None
     if ai_scores["fundamental"] <= 25:
         fatal_flaw = "基本面存在严重问题"
@@ -537,7 +524,7 @@ def compute_signal_5d(session_state: dict) -> dict | None:
         "expectation": ai_scores["expectation"],
         "technical": ai_scores["technical"],
         "capital": ai_scores["capital"],
-        "sentiment": ai_scores["sentiment"],
+        "sentiment": ai_scores["capital"],  # 兼容五维UI，用资金面填充
         "composite": composite,
         "verdict": verdict,
         "resonance": resonance,

@@ -59,10 +59,10 @@ def get_summary_model_cfg(main_cfg: dict) -> dict:
 
 
 def parse_scores(text: str) -> dict | None:
-    """从报告文本中解析 <<<SCORES>>> 块
+    """从报告文本中解析 <<<SCORES>>> 块（四维）
 
     Returns:
-        {"基本面": 7, "预期差": 6, "技术面": 8, "资金面": 5, "舆情情绪": 6} or None
+        {"基本面": 7, "预期差": 6, "技术面": 8, "资金面": 5, ...} or None
     """
     m = re.search(r"<<<SCORES>>>(.*?)<<<END_SCORES>>>", text, re.DOTALL)
     if not m:
@@ -72,16 +72,49 @@ def parse_scores(text: str) -> dict | None:
     scores = {}
     for line in block.strip().split("\n"):
         line = line.strip()
-        if not line:
+        if not line or line == "---":
             continue
-        # 匹配 "基本面: 7/10" 或 "基本面：7 / 10"
         match = re.match(r"(.+?)[：:]\s*(\d+(?:\.\d+)?)\s*/\s*10", line)
         if match:
             dim = match.group(1).strip()
             score = float(match.group(2))
             scores[dim] = score
 
+    # 兼容：如果有"舆情情绪"维度（旧版），忽略它
+    scores.pop("舆情情绪", None)
+    scores.pop("舆情", None)
+
     return scores if scores else None
+
+
+def apply_bucket_correction(scores: dict) -> dict:
+    """木桶修正：任何维度≤3分，综合分cap到4.0，标记致命缺陷
+
+    由代码强制执行（不依赖模型），100%可靠。
+    """
+    dims = ["基本面", "预期差", "技术面", "资金面"]
+    dim_scores = [scores.get(d, 5) for d in dims]
+    min_score = min(dim_scores)
+
+    if min_score <= 3:
+        if "综合加权" in scores:
+            scores["综合加权"] = min(scores["综合加权"], 4.0)
+        weakest = [d for d in dims if scores.get(d, 5) <= 3]
+        scores["_fatal_flaw"] = f"{'、'.join(weakest)}评分≤3，触发木桶修正"
+        scores["_bucket_corrected"] = True
+    else:
+        scores["_bucket_corrected"] = False
+
+    return scores
+
+
+def check_score_spread(scores: dict) -> str | None:
+    """检查评分是否全在6-8区间，返回警告文本或None"""
+    dims = ["基本面", "预期差", "技术面", "资金面"]
+    all_scores = [scores.get(d, 5) for d in dims]
+    if all(6 <= s <= 8 for s in all_scores):
+        return "⚠️ 评分区分度不足：四维评分全在6-8分区间，可能未充分反映个别维度的突出优势或明显短板。"
+    return None
 
 
 def run_deep_report(client, cfg, selected_model, username):
@@ -220,13 +253,18 @@ def run_deep_report(client, cfg, selected_model, username):
         st.warning("报告生成内容过短，模型可能响应异常")
         return
 
-    # ── 5. 解析评分 + 清理文本 ───────────────────────────────────
+    # ── 5. 解析评分 + 木桶修正 + 清理文本 ──────────────────────────
     scores = parse_scores(full_text)
+    if scores:
+        scores = apply_bucket_correction(scores)
+        spread_warn = check_score_spread(scores)
+    else:
+        spread_warn = None
     # 清理正文：移除 SCORES 块（已解析），修复未闭合加粗
     full_text = _cleanup_report_text(full_text)
 
     # ── 6. 生成执行摘要（直接用主模型，避免降级导致空响应）──────
-    summary_prompt = build_summary_prompt(full_text)
+    summary_prompt = build_summary_prompt(full_text, name=name, code6=code6)
 
     _heartbeat_summary = st.empty()
     _heartbeat_summary.info("📝 正在生成执行摘要...")

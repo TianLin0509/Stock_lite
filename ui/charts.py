@@ -345,19 +345,18 @@ def render_radar(signal: dict) -> None:
 
 
 def render_radar_5d(signal: dict) -> None:
-    """渲染五维综合投研雷达图"""
-    categories = ["基本面", "预期差", "技术面", "资金面", "舆情情绪"]
+    """渲染四维综合投研雷达图"""
+    categories = ["基本面", "预期差", "技术面", "资金面"]
     values = [
         signal["fundamental"],
         signal["expectation"],
         signal["technical"],
         signal["capital"],
-        signal["sentiment"],
     ]
     values_closed = values + [values[0]]
     categories_closed = categories + [categories[0]]
 
-    ref_line = [75] * 6  # 共振线
+    ref_line = [75] * 5  # 共振线
 
     fig = go.Figure()
 
