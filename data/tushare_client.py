@@ -11,6 +11,7 @@ import pandas as pd
 import re
 import os
 from datetime import datetime, timedelta
+from utils.app_config import get_secret
 
 logger = logging.getLogger(__name__)
 
@@ -19,8 +20,8 @@ logger = logging.getLogger(__name__)
 # LAZY INIT — 后台线程探测，不阻塞 import
 # ══════════════════════════════════════════════════════════════════════════════
 
-TUSHARE_TOKEN = st.secrets.get("TUSHARE_TOKEN", "")
-TUSHARE_URL   = st.secrets.get("TUSHARE_URL", "http://lianghua.nanyangqiankun.top")
+TUSHARE_TOKEN = get_secret("TUSHARE_TOKEN", "")
+TUSHARE_URL   = get_secret("TUSHARE_URL", "http://lianghua.nanyangqiankun.top")
 
 _init_lock = threading.Lock()
 _pro = None
@@ -203,10 +204,24 @@ def load_stock_list() -> tuple[pd.DataFrame, str | None]:
     """优先读本地 CSV → Tushare API → akshare"""
     if os.path.exists(_STOCK_LIST_CSV):
         try:
-            df = pd.read_csv(_STOCK_LIST_CSV)
+            df = None
+            last_error = None
+            for encoding in ("utf-8", "utf-8-sig", "gbk"):
+                try:
+                    df = pd.read_csv(_STOCK_LIST_CSV, encoding=encoding)
+                    logger.info("[load_stock_list] loaded local csv with encoding=%s rows=%s", encoding, len(df))
+                    break
+                except Exception as exc:
+                    last_error = exc
+            if df is None:
+                raise last_error or RuntimeError("failed to load stock_list.csv")
             for col in ["ts_code", "symbol", "name", "industry", "area", "market"]:
                 if col not in df.columns:
                     df[col] = ""
+            df["ts_code"] = df["ts_code"].astype(str).str.strip().str.upper()
+            df["symbol"] = df["symbol"].astype(str).str.replace(r"\.0$", "", regex=True).str.zfill(6)
+            for col in ["name", "industry", "area", "market"]:
+                df[col] = df[col].astype(str).str.strip()
             return df, None
         except Exception as e:
             logger.debug("[load_stock_list] CSV 读取失败: %s", e)
@@ -235,28 +250,42 @@ def resolve_stock(query: str) -> tuple[str, str, str | None]:
     query = query.strip()
     df, err = load_stock_list()
 
+    def _is_code_like(value: str) -> bool:
+        value = value.strip().upper()
+        return bool(
+            re.fullmatch(r"\d{6}", value)
+            or re.fullmatch(r"\d{6}\.(SH|SZ|BJ)", value)
+        )
+
     if err:
-        code6 = re.sub(r"\D", "", query) or "000001"
-        ts_code = to_ts_code(code6)
-        return ts_code, query, f"股票列表获取失败（{err}），已按代码直接查询"
+        if _is_code_like(query):
+            ts_code = to_ts_code(re.sub(r"\D", "", query) or query)
+            return ts_code, query, f"股票列表获取失败（{err}），已按代码直接查询"
+        return "", query, f"股票列表获取失败（{err}），且未识别到有效股票代码"
 
     if not df.empty:
         if re.match(r"^\d{6}$", query):
             m = df[df["symbol"].astype(str) == query]
             if not m.empty:
                 return m.iloc[0]["ts_code"], m.iloc[0]["name"], None
-            return to_ts_code(query), query, None
+            return "", query, f"未识别到股票：{query}"
 
-        m = df[df["name"].str.contains(query, na=False)]
+        if re.match(r"^\d{6}\.(SH|SZ|BJ)$", query, re.IGNORECASE):
+            normalized = query.upper()
+            m = df[df["ts_code"].astype(str).str.upper() == normalized]
+            if not m.empty:
+                return m.iloc[0]["ts_code"], m.iloc[0]["name"], None
+            return "", query, f"未识别到股票：{query}"
+
+        m = df[df["name"].astype(str).str.contains(query, na=False, regex=False)]
         if not m.empty:
             return m.iloc[0]["ts_code"], m.iloc[0]["name"], None
 
-        m = df[df["symbol"].astype(str).str.contains(query, na=False)]
+        m = df[df["symbol"].astype(str).str.contains(query, na=False, regex=False)]
         if not m.empty:
             return m.iloc[0]["ts_code"], m.iloc[0]["name"], None
 
-    code6 = re.sub(r"\D", "", query) or "000001"
-    return to_ts_code(code6), query, None
+    return "", query, f"未识别到股票：{query}"
 
 
 @st.cache_data(ttl=600, show_spinner=False)

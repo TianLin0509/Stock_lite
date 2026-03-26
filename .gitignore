@@ -22,3 +22,7 @@ data/archive/
 
 # Logs
 logs/
+
+# Local deploy/temp artifacts
+deploy_bundle.zip
+temp_*

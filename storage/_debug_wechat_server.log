@@ -1,0 +1,781 @@
+2026-03-25 00:49:58,526 [INFO] GET /report/test
+2026-03-25 00:49:58,528 [WARNING] GET /report/test not_found
+2026-03-25 00:54:59,890 [INFO] GET /report/test
+2026-03-25 00:54:59,892 [WARNING] GET /report/test not_found
+2026-03-25 01:07:50,074 [INFO] GET /report/test
+2026-03-25 01:07:50,076 [WARNING] GET /report/test not_found
+2026-03-25 01:08:03,333 [INFO] GET /report/test
+2026-03-25 01:08:03,335 [WARNING] GET /report/test not_found
+2026-03-25 01:08:28,676 [INFO] POST /wechat received client=101.87.227.173 ok=True timestamp=1774372104 nonce=codextest123
+2026-03-25 01:08:28,677 [INFO] POST /wechat raw_body=<xml><ToUserName><![CDATA[gh_test]]></ToUserName><FromUserName><![CDATA[user_openid]]></FromUserName><CreateTime>1774372104</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA[k??? ???]]></Content><MsgId>990001</MsgId></xml>
+2026-03-25 01:08:28,682 [INFO] POST /wechat parsed from_user=user_openid to_user=gh_test msg_type=text msg_id=990001 content=k??? ???
+2026-03-25 01:08:28,795 [INFO] POST /wechat stock precheck rejected openid=user_openid msg_id=990001 content=k??? ???
+2026-03-25 01:08:28,795 [INFO] POST /wechat reply_sent openid=user_openid msg_type=text
+2026-03-25 01:08:51,971 [INFO] GET /report/f3e27b90-daaf-4203-8c45-d58a8ad819ee
+2026-03-25 01:08:51,973 [WARNING] GET /report/f3e27b90-daaf-4203-8c45-d58a8ad819ee not_found
+2026-03-25 01:08:57,148 [INFO] GET /top100/latest
+2026-03-25 01:09:01,106 [INFO] POST /wechat received client=101.87.227.173 ok=True timestamp=1774372137 nonce=codexkline456
+2026-03-25 01:09:01,106 [INFO] POST /wechat raw_body=<xml>
+<ToUserName><![CDATA[gh_test]]></ToUserName>
+<FromUserName><![CDATA[user_openid]]></FromUserName>
+<CreateTime>1774372137</CreateTime>
+<MsgType><![CDATA[text]]></MsgType>
+<Content><![CDATA[K线预测 002594]]></Content>
+<MsgId>990002</MsgId>
+</xml>
+2026-03-25 01:09:01,109 [INFO] POST /wechat parsed from_user=user_openid to_user=gh_test msg_type=text msg_id=990002 content=K线预测 002594
+2026-03-25 01:09:01,120 [INFO] POST /wechat kline task queued openid=user_openid msg_id=990002 content=002594
+2026-03-25 01:09:01,120 [INFO] POST /wechat reply_sent openid=user_openid msg_type=text
+2026-03-25 01:09:01,121 [INFO] run_kline_prediction_analysis start openid=user_openid stock=002594
+2026-03-25 01:09:02,120 [INFO] GET /report/f3e27b90-daaf-4203-8c45-d58a8ad819ee
+2026-03-25 01:09:02,122 [WARNING] GET /report/f3e27b90-daaf-4203-8c45-d58a8ad819ee not_found
+2026-03-25 01:11:14,253 [INFO] GET /report/test
+2026-03-25 01:11:14,256 [WARNING] GET /report/test not_found
+2026-03-25 01:11:14,745 [INFO] GET /prompt/current
+2026-03-25 01:11:35,574 [INFO] GET /prompt/current
+2026-03-25 01:12:20,468 [INFO] GET /prompt/current
+2026-03-25 01:14:53,238 [INFO] GET /report/test
+2026-03-25 01:14:53,240 [WARNING] GET /report/test not_found
+2026-03-25 01:17:30,829 [INFO] GET /report/test
+2026-03-25 01:17:30,831 [WARNING] GET /report/test not_found
+2026-03-25 01:17:35,110 [INFO] GET /report/test
+2026-03-25 01:17:35,112 [WARNING] GET /report/test not_found
+2026-03-25 01:17:35,531 [INFO] GET /prompt/current
+2026-03-25 01:17:35,920 [INFO] GET /top100/latest
+2026-03-25 01:17:39,653 [INFO] GET /report/test
+2026-03-25 01:17:39,655 [WARNING] GET /report/test not_found
+2026-03-25 01:17:53,625 [INFO] POST /wechat received client=101.87.227.173 ok=True timestamp=1774372669 nonce=codex990101
+2026-03-25 01:17:53,626 [INFO] POST /wechat raw_body=<xml>
+<ToUserName><![CDATA[gh_test]]></ToUserName>
+<FromUserName><![CDATA[user_test]]></FromUserName>
+<CreateTime>1774372669</CreateTime>
+<MsgType><![CDATA[text]]></MsgType>
+<Content><![CDATA[K??? ???]]></Content>
+<MsgId>990101</MsgId>
+</xml>
+2026-03-25 01:17:53,630 [INFO] POST /wechat parsed from_user=user_test to_user=gh_test msg_type=text msg_id=990101 content=K??? ???
+2026-03-25 01:17:53,706 [INFO] POST /wechat stock precheck rejected openid=user_test msg_id=990101 content=K??? ???
+2026-03-25 01:17:53,706 [INFO] POST /wechat reply_sent openid=user_test msg_type=text
+2026-03-25 01:17:54,237 [INFO] POST /wechat received client=101.87.227.173 ok=True timestamp=1774372670 nonce=codex990102
+2026-03-25 01:17:54,238 [INFO] POST /wechat raw_body=<xml>
+<ToUserName><![CDATA[gh_test]]></ToUserName>
+<FromUserName><![CDATA[user_test]]></FromUserName>
+<CreateTime>1774372670</CreateTime>
+<MsgType><![CDATA[text]]></MsgType>
+<Content><![CDATA[?? ???]]></Content>
+<MsgId>990102</MsgId>
+</xml>
+2026-03-25 01:17:54,238 [INFO] POST /wechat parsed from_user=user_test to_user=gh_test msg_type=text msg_id=990102 content=?? ???
+2026-03-25 01:17:54,246 [INFO] POST /wechat stock precheck rejected openid=user_test msg_id=990102 content=?? ???
+2026-03-25 01:17:54,246 [INFO] POST /wechat reply_sent openid=user_test msg_type=text
+2026-03-25 01:17:54,418 [INFO] POST /wechat received client=101.87.227.173 ok=True timestamp=1774372670 nonce=codex990103
+2026-03-25 01:17:54,418 [INFO] POST /wechat raw_body=<xml>
+<ToUserName><![CDATA[gh_test]]></ToUserName>
+<FromUserName><![CDATA[user_test]]></FromUserName>
+<CreateTime>1774372670</CreateTime>
+<MsgType><![CDATA[text]]></MsgType>
+<Content><![CDATA[??? k?]]></Content>
+<MsgId>990103</MsgId>
+</xml>
+2026-03-25 01:17:54,418 [INFO] POST /wechat parsed from_user=user_test to_user=gh_test msg_type=text msg_id=990103 content=??? k?
+2026-03-25 01:17:54,426 [INFO] POST /wechat stock precheck rejected openid=user_test msg_id=990103 content=??? k?
+2026-03-25 01:17:54,426 [INFO] POST /wechat reply_sent openid=user_test msg_type=text
+2026-03-25 01:18:22,385 [INFO] POST /wechat received client=101.87.227.173 ok=True timestamp=1774372698 nonce=codex990201
+2026-03-25 01:18:22,385 [INFO] POST /wechat raw_body=<xml>
+<ToUserName><![CDATA[gh_test]]></ToUserName>
+<FromUserName><![CDATA[user_test]]></FromUserName>
+<CreateTime>1774372698</CreateTime>
+<MsgType><![CDATA[text]]></MsgType>
+<Content><![CDATA[K线预测 比亚迪]]></Content>
+<MsgId>990201</MsgId>
+</xml>
+2026-03-25 01:18:22,387 [INFO] POST /wechat parsed from_user=user_test to_user=gh_test msg_type=text msg_id=990201 content=K线预测 比亚迪
+2026-03-25 01:18:22,394 [INFO] POST /wechat kline task queued openid=user_test msg_id=990201 content=比亚迪
+2026-03-25 01:18:22,394 [INFO] POST /wechat reply_sent openid=user_test msg_type=text
+2026-03-25 01:18:22,395 [INFO] run_kline_prediction_analysis start openid=user_test stock=比亚迪
+2026-03-25 01:18:22,989 [INFO] POST /wechat received client=101.87.227.173 ok=True timestamp=1774372699 nonce=codex990202
+2026-03-25 01:18:22,989 [INFO] POST /wechat raw_body=<xml>
+<ToUserName><![CDATA[gh_test]]></ToUserName>
+<FromUserName><![CDATA[user_test]]></FromUserName>
+<CreateTime>1774372699</CreateTime>
+<MsgType><![CDATA[text]]></MsgType>
+<Content><![CDATA[预测 比亚迪]]></Content>
+<MsgId>990202</MsgId>
+</xml>
+2026-03-25 01:18:22,989 [INFO] POST /wechat parsed from_user=user_test to_user=gh_test msg_type=text msg_id=990202 content=预测 比亚迪
+2026-03-25 01:18:22,994 [INFO] POST /wechat kline task queued openid=user_test msg_id=990202 content=比亚迪
+2026-03-25 01:18:22,994 [INFO] POST /wechat reply_sent openid=user_test msg_type=text
+2026-03-25 01:18:22,996 [INFO] run_kline_prediction_analysis start openid=user_test stock=比亚迪
+2026-03-25 01:18:23,156 [INFO] POST /wechat received client=101.87.227.173 ok=True timestamp=1774372699 nonce=codex990203
+2026-03-25 01:18:23,156 [INFO] POST /wechat raw_body=<xml>
+<ToUserName><![CDATA[gh_test]]></ToUserName>
+<FromUserName><![CDATA[user_test]]></FromUserName>
+<CreateTime>1774372699</CreateTime>
+<MsgType><![CDATA[text]]></MsgType>
+<Content><![CDATA[比亚迪 k线]]></Content>
+<MsgId>990203</MsgId>
+</xml>
+2026-03-25 01:18:23,156 [INFO] POST /wechat parsed from_user=user_test to_user=gh_test msg_type=text msg_id=990203 content=比亚迪 k线
+2026-03-25 01:18:23,162 [INFO] POST /wechat kline task queued openid=user_test msg_id=990203 content=比亚迪
+2026-03-25 01:18:23,163 [INFO] POST /wechat reply_sent openid=user_test msg_type=text
+2026-03-25 01:18:23,164 [INFO] run_kline_prediction_analysis start openid=user_test stock=比亚迪
+2026-03-25 01:21:51,465 [INFO] GET /prompt/current
+2026-03-25 01:21:51,845 [INFO] GET /top100/latest
+2026-03-25 01:21:52,256 [INFO] GET /top100/latest
+2026-03-25 01:21:52,889 [INFO] GET /top100/latest
+2026-03-25 01:21:52,900 [INFO] GET /top100/latest
+2026-03-25 01:21:53,028 [INFO] GET /top100/latest
+2026-03-25 01:22:00,912 [INFO] GET /report/test
+2026-03-25 01:22:06,584 [WARNING] GET /report/test not_found
+2026-03-25 01:22:06,889 [INFO] GET /prompt/current
+2026-03-25 01:22:12,057 [INFO] GET /report/test
+2026-03-25 01:22:12,306 [WARNING] GET /report/test not_found
+2026-03-25 01:22:12,477 [INFO] GET /prompt/current
+2026-03-25 01:22:21,434 [INFO] GET /report/test
+2026-03-25 01:22:22,250 [WARNING] GET /report/test not_found
+2026-03-25 01:22:22,666 [INFO] GET /prompt/current
+2026-03-25 01:22:27,896 [INFO] GET /report/test
+2026-03-25 01:22:27,926 [WARNING] GET /report/test not_found
+2026-03-25 01:22:28,115 [INFO] GET /prompt/current
+2026-03-25 01:22:35,519 [INFO] GET /report/test
+2026-03-25 01:22:35,945 [WARNING] GET /report/test not_found
+2026-03-25 01:22:37,173 [INFO] GET /report/f3e27b90-daaf-4203-8c45-d58a8ad819ee
+2026-03-25 01:22:37,193 [WARNING] GET /report/f3e27b90-daaf-4203-8c45-d58a8ad819ee not_found
+2026-03-25 01:22:37,288 [INFO] GET /prompt/current
+2026-03-25 01:22:42,442 [INFO] GET /report/test
+2026-03-25 01:22:42,484 [WARNING] GET /report/test not_found
+2026-03-25 01:22:42,934 [INFO] GET /prompt/current
+2026-03-25 01:25:01,286 [ERROR] run_kline_prediction_analysis failed openid=user_test stock=比亚迪 error=MemoryError((50, 999847), dtype('float64'))
+Traceback (most recent call last):
+  File "C:\StockLite\app\main.py", line 1079, in run_kline_prediction_analysis
+    ensure_research_dataset()
+             ~~~~~~~~~~~~~~^^
+  File "C:\StockLite\app\services\prebuilt_kline_service.py", line 97, in build_kline_prediction_report
+    snapshot = build_stock_research_snapshot(
+        dataset,
+    ...<3 lines>...
+        min_rule_samples=min_rule_samples,
+    )
+  File "C:\StockLite\app\analysis\kline_research.py", line 341, in build_stock_research_snapshot
+    model = train_probability_model(dataset, horizon=horizon, feature_names=feature_list)
+  File "C:\StockLite\app\analysis\kline_research.py", line 234, in train_probability_model
+    return model.fit(dataset)
+           ~~~~~~~~~^^^^^^^^^
+  File "C:\StockLite\app\analysis\kline_research.py", line 84, in fit
+    clean = frame.dropna(subset=self.feature_names + [target_col]).copy()
+  File "C:\StockLite\app\.venv\Lib\site-packages\pandas\core\generic.py", line 6833, in copy
+    data = self._mgr.copy(deep=deep)
+  File "C:\StockLite\app\.venv\Lib\site-packages\pandas\core\internals\managers.py", line 612, in copy
+    res = self.apply("copy", deep=deep)
+  File "C:\StockLite\app\.venv\Lib\site-packages\pandas\core\internals\managers.py", line 363, in apply
+    applied = getattr(b, f)(**kwargs)
+  File "C:\StockLite\app\.venv\Lib\site-packages\pandas\core\internals\blocks.py", line 822, in copy
+    values = values.copy()
+numpy._core._exceptions._ArrayMemoryError: Unable to allocate 381. MiB for an array with shape (50, 999847) and data type float64
+2026-03-25 01:25:01,207 [ERROR] run_kline_prediction_analysis failed openid=user_test stock=比亚迪 error=MemoryError((50, 999847), dtype('float64'))
+Traceback (most recent call last):
+  File "C:\StockLite\app\main.py", line 1079, in run_kline_prediction_analysis
+    ensure_research_dataset()
+             ~~~~~~~~~~~~~~^^
+  File "C:\StockLite\app\services\prebuilt_kline_service.py", line 97, in build_kline_prediction_report
+    snapshot = build_stock_research_snapshot(
+        dataset,
+    ...<3 lines>...
+        min_rule_samples=min_rule_samples,
+    )
+  File "C:\StockLite\app\analysis\kline_research.py", line 341, in build_stock_research_snapshot
+    model = train_probability_model(dataset, horizon=horizon, feature_names=feature_list)
+  File "C:\StockLite\app\analysis\kline_research.py", line 234, in train_probability_model
+    return model.fit(dataset)
+           ~~~~~~~~~^^^^^^^^^
+  File "C:\StockLite\app\analysis\kline_research.py", line 84, in fit
+    clean = frame.dropna(subset=self.feature_names + [target_col]).copy()
+  File "C:\StockLite\app\.venv\Lib\site-packages\pandas\core\generic.py", line 6833, in copy
+    data = self._mgr.copy(deep=deep)
+  File "C:\StockLite\app\.venv\Lib\site-packages\pandas\core\internals\managers.py", line 612, in copy
+    res = self.apply("copy", deep=deep)
+  File "C:\StockLite\app\.venv\Lib\site-packages\pandas\core\internals\managers.py", line 363, in apply
+    applied = getattr(b, f)(**kwargs)
+  File "C:\StockLite\app\.venv\Lib\site-packages\pandas\core\internals\blocks.py", line 822, in copy
+    values = values.copy()
+numpy._core._exceptions._ArrayMemoryError: Unable to allocate 381. MiB for an array with shape (50, 999847) and data type float64
+2026-03-25 01:25:06,044 [INFO] GET /top10/latest
+2026-03-25 01:25:10,980 [INFO] GET /top100/latest
+2026-03-25 01:25:19,057 [INFO] GET /report/test
+2026-03-25 01:25:19,296 [INFO] GET /top10/latest
+2026-03-25 01:25:20,531 [WARNING] GET /report/test not_found
+2026-03-25 01:25:20,633 [INFO] GET /top100/latest
+2026-03-25 01:25:21,329 [INFO] GET /report/test
+2026-03-25 01:25:21,507 [WARNING] GET /report/test not_found
+2026-03-25 01:25:23,140 [INFO] get_access_token success
+2026-03-25 01:25:23,158 [INFO] get_access_token success
+2026-03-25 01:25:23,196 [INFO] send_custom_message start openid=user_test chunks=1 content_length=118
+2026-03-25 01:25:23,218 [INFO] send_custom_message start openid=user_test chunks=1 content_length=118
+2026-03-25 01:25:28,376 [INFO] send_custom_message chunk_result openid=user_test result={'errcode': 40003, 'errmsg': 'invalid openid rid: 69c2c908-3ccb5c92-06a82285'}
+2026-03-25 01:25:28,390 [INFO] send_custom_message chunk_result openid=user_test result={'errcode': 40003, 'errmsg': 'invalid openid rid: 69c2c908-5dd08069-3d98fb22'}
+2026-03-25 01:25:52,574 [INFO] POST /wechat received client=101.87.227.173 ok=True timestamp=1774373144 nonce=codex990201
+2026-03-25 01:25:52,595 [INFO] POST /wechat raw_body=<xml>
+<ToUserName><![CDATA[gh_test]]></ToUserName>
+<FromUserName><![CDATA[user_test]]></FromUserName>
+<CreateTime>1774373144</CreateTime>
+<MsgType><![CDATA[text]]></MsgType>
+<Content><![CDATA[K线预测 比亚迪]]></Content>
+<MsgId>990201</MsgId>
+</xml>
+2026-03-25 01:25:52,639 [INFO] POST /wechat parsed from_user=user_test to_user=gh_test msg_type=text msg_id=990201 content=K线预测 比亚迪
+2026-03-25 01:25:52,681 [INFO] POST /wechat duplicate message ignored msg_id=990201 content=K线预测 比亚迪
+2026-03-25 01:25:52,699 [INFO] POST /wechat reply_sent openid=user_test msg_type=text
+2026-03-25 01:25:53,715 [INFO] POST /wechat received client=101.87.227.173 ok=True timestamp=1774373149 nonce=codex990202
+2026-03-25 01:25:53,719 [INFO] POST /wechat raw_body=<xml>
+<ToUserName><![CDATA[gh_test]]></ToUserName>
+<FromUserName><![CDATA[user_test]]></FromUserName>
+<CreateTime>1774373149</CreateTime>
+<MsgType><![CDATA[text]]></MsgType>
+<Content><![CDATA[预测 比亚迪]]></Content>
+<MsgId>990202</MsgId>
+</xml>
+2026-03-25 01:25:53,719 [INFO] POST /wechat parsed from_user=user_test to_user=gh_test msg_type=text msg_id=990202 content=预测 比亚迪
+2026-03-25 01:25:53,723 [INFO] POST /wechat duplicate message ignored msg_id=990202 content=预测 比亚迪
+2026-03-25 01:25:53,724 [INFO] POST /wechat reply_sent openid=user_test msg_type=text
+2026-03-25 01:25:53,890 [INFO] POST /wechat received client=101.87.227.173 ok=True timestamp=1774373150 nonce=codex990203
+2026-03-25 01:25:53,890 [INFO] POST /wechat raw_body=<xml>
+<ToUserName><![CDATA[gh_test]]></ToUserName>
+<FromUserName><![CDATA[user_test]]></FromUserName>
+<CreateTime>1774373150</CreateTime>
+<MsgType><![CDATA[text]]></MsgType>
+<Content><![CDATA[比亚迪 k线]]></Content>
+<MsgId>990203</MsgId>
+</xml>
+2026-03-25 01:25:53,896 [INFO] POST /wechat parsed from_user=user_test to_user=gh_test msg_type=text msg_id=990203 content=比亚迪 k线
+2026-03-25 01:25:53,896 [INFO] POST /wechat duplicate message ignored msg_id=990203 content=比亚迪 k线
+2026-03-25 01:25:53,896 [INFO] POST /wechat reply_sent openid=user_test msg_type=text
+2026-03-25 01:25:54,092 [INFO] GET /top10/latest
+2026-03-25 01:25:54,210 [INFO] GET /report/f3e27b90-daaf-4203-8c45-d58a8ad819ee
+2026-03-25 01:25:54,314 [WARNING] GET /report/f3e27b90-daaf-4203-8c45-d58a8ad819ee not_found
+2026-03-25 01:25:54,488 [INFO] GET /report/e1a65b96-0e33-43cd-9fa1-46e3992dce7b
+2026-03-25 01:25:54,489 [WARNING] GET /report/e1a65b96-0e33-43cd-9fa1-46e3992dce7b not_found
+2026-03-25 01:25:54,646 [INFO] GET /report/e0efe344-ba60-4efb-8d2e-5284d9841279
+2026-03-25 01:25:54,661 [WARNING] GET /report/e0efe344-ba60-4efb-8d2e-5284d9841279 not_found
+2026-03-25 01:25:54,797 [INFO] GET /report/343b2f23-bc9a-4ea1-939b-69c84b9af0f8
+2026-03-25 01:25:54,800 [WARNING] GET /report/343b2f23-bc9a-4ea1-939b-69c84b9af0f8 not_found
+2026-03-25 01:25:54,925 [INFO] GET /report/c96efc8d-96b7-4f0d-8fb0-ee9139eab460
+2026-03-25 01:25:54,927 [WARNING] GET /report/c96efc8d-96b7-4f0d-8fb0-ee9139eab460 not_found
+2026-03-25 01:26:22,251 [INFO] GET /top100/latest
+2026-03-25 01:26:36,677 [INFO] GET /report/f3e27b90-daaf-4203-8c45-d58a8ad819ee
+2026-03-25 01:26:36,743 [WARNING] GET /report/f3e27b90-daaf-4203-8c45-d58a8ad819ee not_found
+2026-03-25 01:26:39,664 [INFO] get_access_token success
+2026-03-25 01:26:39,665 [INFO] send_custom_message start openid=user_test chunks=1 content_length=180
+2026-03-25 01:26:40,169 [INFO] GET /report/e1a65b96-0e33-43cd-9fa1-46e3992dce7b
+2026-03-25 01:26:40,173 [WARNING] GET /report/e1a65b96-0e33-43cd-9fa1-46e3992dce7b not_found
+2026-03-25 01:26:40,318 [INFO] send_custom_message chunk_result openid=user_test result={'errcode': 40003, 'errmsg': 'invalid openid rid: 69c2c950-08cf2ceb-797a053e'}
+2026-03-25 01:26:40,320 [INFO] run_kline_prediction_analysis success openid=user_test stock=比亚迪 report_id=96087c32-5f3d-46f8-9790-06fea5b1b91b markdown_path=C:\StockLite\app\storage\reports\20260325_012638_比亚迪_002594_SZ_ser_test_96087c32-5f3d-46f8-9790-06fea5b1b91b.md
+2026-03-25 01:26:43,388 [INFO] GET /report/c96efc8d-96b7-4f0d-8fb0-ee9139eab460
+2026-03-25 01:26:43,390 [WARNING] GET /report/c96efc8d-96b7-4f0d-8fb0-ee9139eab460 not_found
+2026-03-25 01:27:41,890 [INFO] GET /report/test
+2026-03-25 01:27:41,892 [WARNING] GET /report/test not_found
+2026-03-25 01:27:50,340 [INFO] GET /report/ab74080f-2725-4f07-b2ef-b09f9f330c77
+2026-03-25 01:27:50,343 [WARNING] GET /report/ab74080f-2725-4f07-b2ef-b09f9f330c77 not_found
+2026-03-25 01:28:07,606 [INFO] POST /wechat received client=101.87.227.173 ok=True timestamp=1774373283 nonce=codex1774373283
+2026-03-25 01:28:07,606 [INFO] POST /wechat raw_body=<xml>
+<ToUserName><![CDATA[gh_test]]></ToUserName>
+<FromUserName><![CDATA[user_test2]]></FromUserName>
+<CreateTime>1774373283</CreateTime>
+<MsgType><![CDATA[text]]></MsgType>
+<Content><![CDATA[预测 比亚迪]]></Content>
+<MsgId>1774373283</MsgId>
+</xml>
+2026-03-25 01:28:07,606 [INFO] POST /wechat parsed from_user=user_test2 to_user=gh_test msg_type=text msg_id=1774373283 content=预测 比亚迪
+2026-03-25 01:28:07,647 [INFO] POST /wechat kline task queued openid=user_test2 msg_id=1774373283 content=比亚迪
+2026-03-25 01:28:07,647 [INFO] POST /wechat reply_sent openid=user_test2 msg_type=text
+2026-03-25 01:28:07,648 [INFO] run_kline_prediction_analysis start openid=user_test2 stock=比亚迪
+2026-03-25 01:28:07,648 [INFO] run_kline_prediction_analysis stage=ensure_dataset openid=user_test2 stock=比亚迪
+2026-03-25 01:28:15,987 [INFO] run_kline_prediction_analysis stage=build_report openid=user_test2 stock=比亚迪
+2026-03-25 01:28:51,558 [INFO] run_kline_prediction_analysis stage=build_report_done openid=user_test2 stock=比亚迪 resolved=比亚迪 code=002594.SZ
+2026-03-25 01:28:51,560 [INFO] run_kline_prediction_analysis stage=save_report openid=user_test2 stock=比亚迪 report_id=4ae349b8-52b2-4ef1-8b3d-74fd97eeb16f
+2026-03-25 01:28:51,586 [INFO] run_kline_prediction_analysis stage=save_report_done openid=user_test2 stock=比亚迪 report_id=4ae349b8-52b2-4ef1-8b3d-74fd97eeb16f markdown_path=C:\StockLite\app\storage\reports\20260325_012851_比亚迪_002594_SZ_er_test2_4ae349b8-52b2-4ef1-8b3d-74fd97eeb16f.md
+2026-03-25 01:28:51,586 [INFO] run_kline_prediction_analysis stage=send_message openid=user_test2 stock=比亚迪 report_id=4ae349b8-52b2-4ef1-8b3d-74fd97eeb16f
+2026-03-25 01:28:52,180 [INFO] get_access_token success
+2026-03-25 01:28:52,183 [INFO] send_custom_message start openid=user_test2 chunks=1 content_length=180
+2026-03-25 01:28:52,647 [INFO] send_custom_message chunk_result openid=user_test2 result={'errcode': 40003, 'errmsg': 'invalid openid rid: 69c2c9d4-7d40af5d-7c263f80'}
+2026-03-25 01:28:52,648 [INFO] run_kline_prediction_analysis stage=send_message_done openid=user_test2 stock=比亚迪 report_id=4ae349b8-52b2-4ef1-8b3d-74fd97eeb16f
+2026-03-25 01:28:52,649 [INFO] run_kline_prediction_analysis success openid=user_test2 stock=比亚迪 report_id=4ae349b8-52b2-4ef1-8b3d-74fd97eeb16f markdown_path=C:\StockLite\app\storage\reports\20260325_012851_比亚迪_002594_SZ_er_test2_4ae349b8-52b2-4ef1-8b3d-74fd97eeb16f.md
+2026-03-25 01:28:56,289 [INFO] GET /top10/latest
+2026-03-25 01:28:56,377 [INFO] GET /report/f3e27b90-daaf-4203-8c45-d58a8ad819ee
+2026-03-25 01:28:56,424 [INFO] GET /report/e1a65b96-0e33-43cd-9fa1-46e3992dce7b
+2026-03-25 01:28:56,506 [INFO] GET /report/e0efe344-ba60-4efb-8d2e-5284d9841279
+2026-03-25 01:28:56,559 [INFO] GET /report/343b2f23-bc9a-4ea1-939b-69c84b9af0f8
+2026-03-25 01:28:56,642 [INFO] GET /report/c96efc8d-96b7-4f0d-8fb0-ee9139eab460
+2026-03-25 01:30:25,791 [INFO] GET /report/f3e27b90-daaf-4203-8c45-d58a8ad819ee
+2026-03-25 01:35:21,676 [INFO] POST /wechat received client=175.24.212.185 ok=True timestamp=1774373721 nonce=940428149
+2026-03-25 01:35:21,676 [INFO] POST /wechat raw_body=<xml><ToUserName><![CDATA[gh_e3a84fa78871]]></ToUserName>
+<FromUserName><![CDATA[oK6mY2wd2Lc62DGAIPXnw5-S2obg]]></FromUserName>
+<CreateTime>1774373720</CreateTime>
+<MsgType><![CDATA[text]]></MsgType>
+<Content><![CDATA[预测 比亚迪]]></Content>
+<MsgId>25402924327136066</MsgId>
+</xml>
+2026-03-25 01:35:21,686 [INFO] POST /wechat parsed from_user=oK6mY2wd2Lc62DGAIPXnw5-S2obg to_user=gh_e3a84fa78871 msg_type=text msg_id=25402924327136066 content=预测 比亚迪
+2026-03-25 01:35:21,707 [INFO] POST /wechat kline task queued openid=oK6mY2wd2Lc62DGAIPXnw5-S2obg msg_id=25402924327136066 content=比亚迪
+2026-03-25 01:35:21,707 [INFO] POST /wechat reply_sent openid=oK6mY2wd2Lc62DGAIPXnw5-S2obg msg_type=text
+2026-03-25 01:35:21,708 [INFO] run_kline_prediction_analysis start openid=oK6mY2wd2Lc62DGAIPXnw5-S2obg stock=比亚迪
+2026-03-25 01:35:21,708 [INFO] run_kline_prediction_analysis stage=ensure_dataset openid=oK6mY2wd2Lc62DGAIPXnw5-S2obg stock=比亚迪
+2026-03-25 01:35:36,142 [INFO] run_kline_prediction_analysis stage=build_report openid=oK6mY2wd2Lc62DGAIPXnw5-S2obg stock=比亚迪
+2026-03-25 01:36:03,010 [INFO] run_kline_prediction_analysis stage=build_report_done openid=oK6mY2wd2Lc62DGAIPXnw5-S2obg stock=比亚迪 resolved=比亚迪 code=002594.SZ
+2026-03-25 01:36:03,020 [INFO] run_kline_prediction_analysis stage=save_report openid=oK6mY2wd2Lc62DGAIPXnw5-S2obg stock=比亚迪 report_id=9697ad5f-aef4-43fd-9c60-d04583a191bc
+2026-03-25 01:36:03,085 [INFO] run_kline_prediction_analysis stage=save_report_done openid=oK6mY2wd2Lc62DGAIPXnw5-S2obg stock=比亚迪 report_id=9697ad5f-aef4-43fd-9c60-d04583a191bc markdown_path=C:\StockLite\app\storage\reports\20260325_013603_比亚迪_002594_SZ_w5-S2obg_9697ad5f-aef4-43fd-9c60-d04583a191bc.md
+2026-03-25 01:36:03,085 [INFO] run_kline_prediction_analysis stage=send_message openid=oK6mY2wd2Lc62DGAIPXnw5-S2obg stock=比亚迪 report_id=9697ad5f-aef4-43fd-9c60-d04583a191bc
+2026-03-25 01:36:03,833 [INFO] get_access_token success
+2026-03-25 01:36:03,835 [INFO] send_custom_message start openid=oK6mY2wd2Lc62DGAIPXnw5-S2obg chunks=1 content_length=180
+2026-03-25 01:36:04,784 [INFO] send_custom_message chunk_result openid=oK6mY2wd2Lc62DGAIPXnw5-S2obg result={'errcode': 0, 'errmsg': 'ok'}
+2026-03-25 01:36:04,786 [INFO] run_kline_prediction_analysis stage=send_message_done openid=oK6mY2wd2Lc62DGAIPXnw5-S2obg stock=比亚迪 report_id=9697ad5f-aef4-43fd-9c60-d04583a191bc
+2026-03-25 01:36:04,787 [INFO] run_kline_prediction_analysis success openid=oK6mY2wd2Lc62DGAIPXnw5-S2obg stock=比亚迪 report_id=9697ad5f-aef4-43fd-9c60-d04583a191bc markdown_path=C:\StockLite\app\storage\reports\20260325_013603_比亚迪_002594_SZ_w5-S2obg_9697ad5f-aef4-43fd-9c60-d04583a191bc.md
+2026-03-25 01:41:15,565 [INFO] GET /report/9697ad5f-aef4-43fd-9c60-d04583a191bc
+2026-03-25 01:41:37,572 [INFO] GET /report/9697ad5f-aef4-43fd-9c60-d04583a191bc
+2026-03-25 01:47:18,714 [INFO] POST /wechat received client=150.158.2.138 ok=True timestamp=1774374438 nonce=467138606
+2026-03-25 01:47:18,716 [INFO] POST /wechat raw_body=<xml><ToUserName><![CDATA[gh_e3a84fa78871]]></ToUserName>
+<FromUserName><![CDATA[oK6mY2wd2Lc62DGAIPXnw5-S2obg]]></FromUserName>
+<CreateTime>1774374437</CreateTime>
+<MsgType><![CDATA[text]]></MsgType>
+<Content><![CDATA[阳光电源]]></Content>
+<MsgId>25402932957648435</MsgId>
+</xml>
+2026-03-25 01:47:18,726 [INFO] POST /wechat parsed from_user=oK6mY2wd2Lc62DGAIPXnw5-S2obg to_user=gh_e3a84fa78871 msg_type=text msg_id=25402932957648435 content=阳光电源
+2026-03-25 01:47:18,778 [INFO] POST /wechat task queued openid=oK6mY2wd2Lc62DGAIPXnw5-S2obg msg_id=25402932957648435 content=阳光电源
+2026-03-25 01:47:18,778 [INFO] POST /wechat reply_sent openid=oK6mY2wd2Lc62DGAIPXnw5-S2obg msg_type=text
+2026-03-25 01:47:18,779 [INFO] run_real_ai_analysis start openid=oK6mY2wd2Lc62DGAIPXnw5-S2obg stock=阳光电源
+2026-03-25 01:47:18,789 [ERROR] run_real_ai_analysis failed openid=oK6mY2wd2Lc62DGAIPXnw5-S2obg stock=阳光电源 error=RuntimeError('「🟣 豆包 · Seed 2.0 Pro」的 API Key 尚未配置')
+Traceback (most recent call last):
+  File "C:\StockLite\app\main.py", line 987, in run_real_ai_analysis
+    bundle = generate_report_bundle(stock_name=stock_name, username=openid)
+  File "C:\StockLite\app\services\analysis_service.py", line 298, in generate_report_bundle
+    raise RuntimeError(ai_err or "AI 模型暂不可用")
+RuntimeError: 「🟣 豆包 · Seed 2.0 Pro」的 API Key 尚未配置
+2026-03-25 01:47:18,854 [ERROR] run_real_ai_analysis classified_error openid=oK6mY2wd2Lc62DGAIPXnw5-S2obg stock=阳光电源 error_code=ai_key_missing error_message=「🟣 豆包 · Seed 2.0 Pro」的 API Key 尚未配置
+2026-03-25 01:47:19,521 [INFO] get_access_token success
+2026-03-25 01:47:19,523 [INFO] send_custom_message start openid=oK6mY2wd2Lc62DGAIPXnw5-S2obg chunks=1 content_length=47
+2026-03-25 01:47:20,422 [INFO] send_custom_message chunk_result openid=oK6mY2wd2Lc62DGAIPXnw5-S2obg result={'errcode': 0, 'errmsg': 'ok'}
+2026-03-25 01:51:01,071 [INFO] GET /report/test
+2026-03-25 01:51:01,073 [WARNING] GET /report/test not_found
+2026-03-25 01:51:01,090 [INFO] POST /wechat received client=101.87.227.173 ok=True timestamp=1774374657 nonce=codex1774374657
+2026-03-25 01:51:01,090 [INFO] POST /wechat raw_body=<xml>
+<ToUserName><![CDATA[gh_test]]></ToUserName>
+<FromUserName><![CDATA[user_test3]]></FromUserName>
+<CreateTime>1774374657</CreateTime>
+<MsgType><![CDATA[text]]></MsgType>
+<Content><![CDATA[预测 比亚迪]]></Content>
+<MsgId>1774374657</MsgId>
+</xml>
+2026-03-25 01:51:01,090 [INFO] POST /wechat parsed from_user=user_test3 to_user=gh_test msg_type=text msg_id=1774374657 content=预测 比亚迪
+2026-03-25 01:51:01,155 [INFO] POST /wechat kline task queued openid=user_test3 msg_id=1774374657 content=比亚迪
+2026-03-25 01:51:01,155 [INFO] POST /wechat reply_sent openid=user_test3 msg_type=text
+2026-03-25 01:51:01,156 [INFO] run_kline_prediction_analysis start openid=user_test3 stock=比亚迪
+2026-03-25 01:51:01,156 [INFO] run_kline_prediction_analysis stage=ensure_dataset openid=user_test3 stock=比亚迪
+2026-03-25 01:51:11,274 [INFO] run_kline_prediction_analysis stage=build_report openid=user_test3 stock=比亚迪
+2026-03-25 01:53:26,259 [INFO] GET /report/test
+2026-03-25 01:53:26,371 [WARNING] GET /report/test not_found
+2026-03-25 01:53:26,563 [INFO] GET /prompt/current
+2026-03-25 01:53:46,480 [INFO] run_kline_prediction_analysis stage=build_report_done openid=user_test3 stock=比亚迪 resolved=比亚迪 code=002594.SZ
+2026-03-25 01:53:46,485 [INFO] run_kline_prediction_analysis stage=save_report openid=user_test3 stock=比亚迪 report_id=738cb203-8290-4486-ba32-4e40e6d6bcc8
+2026-03-25 01:53:46,517 [INFO] run_kline_prediction_analysis stage=save_report_done openid=user_test3 stock=比亚迪 report_id=738cb203-8290-4486-ba32-4e40e6d6bcc8 markdown_path=C:\StockLite\app\storage\reports\20260325_015346_比亚迪_002594_SZ_er_test3_738cb203-8290-4486-ba32-4e40e6d6bcc8.md
+2026-03-25 01:53:46,517 [INFO] run_kline_prediction_analysis stage=send_message openid=user_test3 stock=比亚迪 report_id=738cb203-8290-4486-ba32-4e40e6d6bcc8
+2026-03-25 01:53:47,230 [INFO] get_access_token success
+2026-03-25 01:53:47,233 [INFO] send_custom_message start openid=user_test3 chunks=1 content_length=157
+2026-03-25 01:53:47,713 [INFO] send_custom_message chunk_result openid=user_test3 result={'errcode': 40003, 'errmsg': 'invalid openid rid: 69c2cfab-44212daf-2108023d'}
+2026-03-25 01:53:47,715 [INFO] run_kline_prediction_analysis stage=send_message_done openid=user_test3 stock=比亚迪 report_id=738cb203-8290-4486-ba32-4e40e6d6bcc8
+2026-03-25 01:53:47,715 [INFO] run_kline_prediction_analysis success openid=user_test3 stock=比亚迪 report_id=738cb203-8290-4486-ba32-4e40e6d6bcc8 markdown_path=C:\StockLite\app\storage\reports\20260325_015346_比亚迪_002594_SZ_er_test3_738cb203-8290-4486-ba32-4e40e6d6bcc8.md
+2026-03-25 01:54:33,822 [INFO] POST /wechat received client=1.15.77.182 ok=True timestamp=1774374873 nonce=1654493659
+2026-03-25 01:54:33,822 [INFO] POST /wechat raw_body=<xml><ToUserName><![CDATA[gh_e3a84fa78871]]></ToUserName>
+<FromUserName><![CDATA[oK6mY2wd2Lc62DGAIPXnw5-S2obg]]></FromUserName>
+<CreateTime>1774374872</CreateTime>
+<MsgType><![CDATA[text]]></MsgType>
+<Content><![CDATA[阳光电源]]></Content>
+<MsgId>25402937221772173</MsgId>
+</xml>
+2026-03-25 01:54:33,824 [INFO] POST /wechat parsed from_user=oK6mY2wd2Lc62DGAIPXnw5-S2obg to_user=gh_e3a84fa78871 msg_type=text msg_id=25402937221772173 content=阳光电源
+2026-03-25 01:54:33,865 [INFO] POST /wechat task queued openid=oK6mY2wd2Lc62DGAIPXnw5-S2obg msg_id=25402937221772173 content=阳光电源
+2026-03-25 01:54:33,867 [INFO] POST /wechat reply_sent openid=oK6mY2wd2Lc62DGAIPXnw5-S2obg msg_type=text
+2026-03-25 01:54:33,868 [INFO] run_real_ai_analysis start openid=oK6mY2wd2Lc62DGAIPXnw5-S2obg stock=阳光电源
+2026-03-25 01:56:04,278 [INFO] get_access_token success
+2026-03-25 01:56:05,395 [INFO] send_template_message result openid=oK6mY2wd2Lc62DGAIPXnw5-S2obg template_id=R7OvwS6JvBAcvpg7vlayZ-OPK6WKxODPerMSLMEIPFE result={'errcode': 0, 'errmsg': 'ok', 'msgid': 4442316450737045505}
+2026-03-25 01:56:05,397 [INFO] run_real_ai_analysis success openid=oK6mY2wd2Lc62DGAIPXnw5-S2obg stock=阳光电源 report_id=b1cfcc05-cd18-4397-b872-837a990328a7 markdown_path=C:\StockLite\app\storage\reports\20260325_015603_阳光电源_300274_SZ_w5-S2obg_b1cfcc05-cd18-4397-b872-837a990328a7.md template_result={'errcode': 0, 'errmsg': 'ok', 'msgid': 4442316450737045505}
+2026-03-25 01:56:06,050 [INFO] POST /wechat received client=124.223.151.119 ok=True timestamp=1774374965 nonce=1838908712
+2026-03-25 01:56:06,050 [INFO] POST /wechat raw_body=<xml><ToUserName><![CDATA[gh_e3a84fa78871]]></ToUserName>
+<FromUserName><![CDATA[oK6mY2wd2Lc62DGAIPXnw5-S2obg]]></FromUserName>
+<CreateTime>1774374965</CreateTime>
+<MsgType><![CDATA[event]]></MsgType>
+<Event><![CDATA[TEMPLATESENDJOBFINISH]]></Event>
+<MsgID>4442316450737045505</MsgID>
+<Status><![CDATA[success]]></Status>
+</xml>
+2026-03-25 01:56:06,050 [INFO] POST /wechat parsed from_user=oK6mY2wd2Lc62DGAIPXnw5-S2obg to_user=gh_e3a84fa78871 msg_type=event msg_id= content=
+2026-03-25 01:56:06,050 [INFO] POST /wechat reply_sent openid=oK6mY2wd2Lc62DGAIPXnw5-S2obg msg_type=event
+2026-03-25 02:05:23,696 [INFO] GET /report/test
+2026-03-25 02:05:23,700 [WARNING] GET /report/test not_found
+2026-03-25 02:05:23,859 [INFO] GET /prompt/current
+2026-03-25 02:05:23,904 [INFO] GET /top10/latest
+2026-03-25 02:05:23,978 [INFO] GET /top100/latest
+2026-03-25 02:35:42,795 [INFO] POST /wechat received client=127.0.0.1 ok=True timestamp=1774377342 nonce=1494446500
+2026-03-25 02:35:42,795 [INFO] POST /wechat raw_body=<xml><ToUserName><![CDATA[gh_e3a84fa78871]]></ToUserName>
+<FromUserName><![CDATA[oK6mY2wd2Lc62DGAIPXnw5-S2obg]]></FromUserName>
+<CreateTime>1774377341</CreateTime>
+<MsgType><![CDATA[text]]></MsgType>
+<Content><![CDATA[阳光电源]]></Content>
+<MsgId>25402975630486069</MsgId>
+</xml>
+2026-03-25 02:35:42,796 [INFO] POST /wechat parsed from_user=oK6mY2wd2Lc62DGAIPXnw5-S2obg to_user=gh_e3a84fa78871 msg_type=text msg_id=25402975630486069 content=阳光电源
+2026-03-25 02:35:42,852 [INFO] POST /wechat task queued openid=oK6mY2wd2Lc62DGAIPXnw5-S2obg msg_id=25402975630486069 content=阳光电源
+2026-03-25 02:35:42,852 [INFO] POST /wechat reply_sent openid=oK6mY2wd2Lc62DGAIPXnw5-S2obg msg_type=text
+2026-03-25 02:35:42,866 [INFO] run_real_ai_analysis start openid=oK6mY2wd2Lc62DGAIPXnw5-S2obg stock=阳光电源
+2026-03-25 02:35:54,970 [INFO] GET /report/test
+2026-03-25 02:35:54,973 [WARNING] GET /report/test not_found
+2026-03-25 02:35:55,088 [INFO] GET /top10/latest
+2026-03-25 02:35:55,186 [INFO] GET /prompt/current
+2026-03-25 02:36:10,801 [INFO] POST /wechat received client=127.0.0.1 ok=False timestamp=1774381000 nonce=codex1774381000
+2026-03-25 02:36:10,801 [WARNING] POST /wechat invalid signature
+2026-03-25 02:37:21,737 [INFO] get_access_token success
+2026-03-25 02:37:22,779 [INFO] send_template_message result openid=oK6mY2wd2Lc62DGAIPXnw5-S2obg template_id=R7OvwS6JvBAcvpg7vlayZ-OPK6WKxODPerMSLMEIPFE result={'errcode': 0, 'errmsg': 'ok', 'msgid': 4442358014125424642}
+2026-03-25 02:37:22,781 [INFO] run_real_ai_analysis success openid=oK6mY2wd2Lc62DGAIPXnw5-S2obg stock=阳光电源 report_id=2547f688-e8f0-44ae-9cd7-fe065716ff11 markdown_path=C:\StockLite\app\storage\reports\20260325_023720_阳光电源_300274_SZ_w5-S2obg_2547f688-e8f0-44ae-9cd7-fe065716ff11.md template_result={'errcode': 0, 'errmsg': 'ok', 'msgid': 4442358014125424642}
+2026-03-25 02:37:23,574 [INFO] POST /wechat received client=127.0.0.1 ok=True timestamp=1774377443 nonce=1605720889
+2026-03-25 02:37:23,574 [INFO] POST /wechat raw_body=<xml><ToUserName><![CDATA[gh_e3a84fa78871]]></ToUserName>
+<FromUserName><![CDATA[oK6mY2wd2Lc62DGAIPXnw5-S2obg]]></FromUserName>
+<CreateTime>1774377443</CreateTime>
+<MsgType><![CDATA[event]]></MsgType>
+<Event><![CDATA[TEMPLATESENDJOBFINISH]]></Event>
+<MsgID>4442358014125424642</MsgID>
+<Status><![CDATA[success]]></Status>
+</xml>
+2026-03-25 02:37:23,575 [INFO] POST /wechat parsed from_user=oK6mY2wd2Lc62DGAIPXnw5-S2obg to_user=gh_e3a84fa78871 msg_type=event msg_id= content=
+2026-03-25 02:37:23,575 [INFO] POST /wechat reply_sent openid=oK6mY2wd2Lc62DGAIPXnw5-S2obg msg_type=event
+2026-03-25 02:37:24,818 [INFO] POST /wechat received client=127.0.0.1 ok=True timestamp=1774377440 nonce=codexkline456
+2026-03-25 02:37:24,819 [INFO] POST /wechat raw_body=<xml>
+<ToUserName><![CDATA[gh_test]]></ToUserName>
+<FromUserName><![CDATA[user_openid]]></FromUserName>
+<CreateTime>1774377440</CreateTime>
+<MsgType><![CDATA[text]]></MsgType>
+<Content><![CDATA[K线预测 002594]]></Content>
+<MsgId>990002</MsgId>
+</xml>
+2026-03-25 02:37:24,819 [INFO] POST /wechat parsed from_user=user_openid to_user=gh_test msg_type=text msg_id=990002 content=K线预测 002594
+2026-03-25 02:37:24,825 [INFO] POST /wechat kline task queued openid=user_openid msg_id=990002 content=002594
+2026-03-25 02:37:24,825 [INFO] POST /wechat reply_sent openid=user_openid msg_type=text
+2026-03-25 02:37:24,826 [INFO] run_kline_prediction_analysis start openid=user_openid stock=002594
+2026-03-25 02:37:24,826 [INFO] run_kline_prediction_analysis stage=ensure_dataset openid=user_openid stock=002594
+2026-03-25 02:37:28,666 [INFO] run_kline_prediction_analysis stage=build_report openid=user_openid stock=002594
+2026-03-25 02:38:21,403 [INFO] GET /report/2547f688-e8f0-44ae-9cd7-fe065716ff11
+2026-03-25 02:38:21,539 [INFO] GET /report/2547f688-e8f0-44ae-9cd7-fe065716ff11
+2026-03-25 02:38:21,784 [INFO] GET /report/2547f688-e8f0-44ae-9cd7-fe065716ff11
+2026-03-25 02:38:50,650 [INFO] GET /report/b1cfcc05-cd18-4397-b872-837a990328a7
+2026-03-25 02:38:59,229 [INFO] run_kline_prediction_analysis stage=build_report_done openid=user_openid stock=002594 resolved=比亚迪 code=002594.SZ
+2026-03-25 02:38:59,233 [INFO] run_kline_prediction_analysis stage=save_report openid=user_openid stock=002594 report_id=782a1951-35b5-476e-b96b-fe075fe0e9bc
+2026-03-25 02:38:59,671 [INFO] run_kline_prediction_analysis stage=save_report_done openid=user_openid stock=002594 report_id=782a1951-35b5-476e-b96b-fe075fe0e9bc markdown_path=C:\StockLite\app\storage\reports\20260325_023859_比亚迪_002594_SZ_r_openid_782a1951-35b5-476e-b96b-fe075fe0e9bc.md
+2026-03-25 02:38:59,671 [INFO] run_kline_prediction_analysis stage=send_message openid=user_openid stock=002594 report_id=782a1951-35b5-476e-b96b-fe075fe0e9bc
+2026-03-25 02:39:00,861 [INFO] get_access_token success
+2026-03-25 02:39:00,863 [INFO] send_custom_message start openid=user_openid chunks=1 content_length=157
+2026-03-25 02:39:01,486 [INFO] send_custom_message chunk_result openid=user_openid result={'errcode': 40003, 'errmsg': 'invalid openid rid: 69c2da45-3bdd04f6-6374d812'}
+2026-03-25 02:39:01,487 [INFO] run_kline_prediction_analysis stage=send_message_done openid=user_openid stock=002594 report_id=782a1951-35b5-476e-b96b-fe075fe0e9bc
+2026-03-25 02:39:01,487 [INFO] run_kline_prediction_analysis success openid=user_openid stock=002594 report_id=782a1951-35b5-476e-b96b-fe075fe0e9bc markdown_path=C:\StockLite\app\storage\reports\20260325_023859_比亚迪_002594_SZ_r_openid_782a1951-35b5-476e-b96b-fe075fe0e9bc.md
+2026-03-25 02:39:17,250 [INFO] POST /wechat received client=127.0.0.1 ok=True timestamp=1774377557 nonce=1738048949
+2026-03-25 02:39:17,253 [INFO] POST /wechat raw_body=<xml><ToUserName><![CDATA[gh_e3a84fa78871]]></ToUserName>
+<FromUserName><![CDATA[oK6mY2wd2Lc62DGAIPXnw5-S2obg]]></FromUserName>
+<CreateTime>1774377555</CreateTime>
+<MsgType><![CDATA[text]]></MsgType>
+<Content><![CDATA[预测 比亚迪]]></Content>
+<MsgId>25402975525651982</MsgId>
+</xml>
+2026-03-25 02:39:17,265 [INFO] POST /wechat parsed from_user=oK6mY2wd2Lc62DGAIPXnw5-S2obg to_user=gh_e3a84fa78871 msg_type=text msg_id=25402975525651982 content=预测 比亚迪
+2026-03-25 02:39:17,314 [INFO] POST /wechat kline task queued openid=oK6mY2wd2Lc62DGAIPXnw5-S2obg msg_id=25402975525651982 content=比亚迪
+2026-03-25 02:39:17,314 [INFO] POST /wechat reply_sent openid=oK6mY2wd2Lc62DGAIPXnw5-S2obg msg_type=text
+2026-03-25 02:39:17,315 [INFO] run_kline_prediction_analysis start openid=oK6mY2wd2Lc62DGAIPXnw5-S2obg stock=比亚迪
+2026-03-25 02:39:17,315 [INFO] run_kline_prediction_analysis stage=ensure_dataset openid=oK6mY2wd2Lc62DGAIPXnw5-S2obg stock=比亚迪
+2026-03-25 02:39:26,074 [INFO] GET /top100/latest
+2026-03-25 02:39:26,210 [INFO] run_kline_prediction_analysis stage=build_report openid=oK6mY2wd2Lc62DGAIPXnw5-S2obg stock=比亚迪
+2026-03-25 02:39:43,095 [INFO] GET /report/f3e27b90-daaf-4203-8c45-d58a8ad819ee
+2026-03-25 02:39:44,174 [INFO] GET /report/f3e27b90-daaf-4203-8c45-d58a8ad819ee
+2026-03-25 02:39:44,204 [INFO] GET /report/2cd81b4a-af92-4b4d-b6e8-fc74ed9eca21
+2026-03-25 02:39:44,206 [INFO] GET /report/bc11df9c-c089-43cf-8a7a-605276657dea
+2026-03-25 02:39:55,832 [INFO] GET /top100/latest
+2026-03-25 02:39:55,847 [INFO] GET /top100/latest
+2026-03-25 02:40:29,571 [INFO] run_kline_prediction_analysis stage=build_report_done openid=oK6mY2wd2Lc62DGAIPXnw5-S2obg stock=比亚迪 resolved=比亚迪 code=002594.SZ
+2026-03-25 02:40:29,577 [INFO] run_kline_prediction_analysis stage=save_report openid=oK6mY2wd2Lc62DGAIPXnw5-S2obg stock=比亚迪 report_id=2cb0babd-c43e-49f1-a2f8-7eb0effd3f20
+2026-03-25 02:40:29,675 [INFO] run_kline_prediction_analysis stage=save_report_done openid=oK6mY2wd2Lc62DGAIPXnw5-S2obg stock=比亚迪 report_id=2cb0babd-c43e-49f1-a2f8-7eb0effd3f20 markdown_path=C:\StockLite\app\storage\reports\20260325_024029_比亚迪_002594_SZ_w5-S2obg_2cb0babd-c43e-49f1-a2f8-7eb0effd3f20.md
+2026-03-25 02:40:29,677 [INFO] run_kline_prediction_analysis stage=send_message openid=oK6mY2wd2Lc62DGAIPXnw5-S2obg stock=比亚迪 report_id=2cb0babd-c43e-49f1-a2f8-7eb0effd3f20
+2026-03-25 02:40:30,775 [INFO] get_access_token success
+2026-03-25 02:40:30,777 [INFO] send_custom_message start openid=oK6mY2wd2Lc62DGAIPXnw5-S2obg chunks=1 content_length=157
+2026-03-25 02:40:31,654 [INFO] send_custom_message chunk_result openid=oK6mY2wd2Lc62DGAIPXnw5-S2obg result={'errcode': 0, 'errmsg': 'ok'}
+2026-03-25 02:40:31,658 [INFO] run_kline_prediction_analysis stage=send_message_done openid=oK6mY2wd2Lc62DGAIPXnw5-S2obg stock=比亚迪 report_id=2cb0babd-c43e-49f1-a2f8-7eb0effd3f20
+2026-03-25 02:40:31,658 [INFO] run_kline_prediction_analysis success openid=oK6mY2wd2Lc62DGAIPXnw5-S2obg stock=比亚迪 report_id=2cb0babd-c43e-49f1-a2f8-7eb0effd3f20 markdown_path=C:\StockLite\app\storage\reports\20260325_024029_比亚迪_002594_SZ_w5-S2obg_2cb0babd-c43e-49f1-a2f8-7eb0effd3f20.md
+2026-03-25 02:42:48,431 [INFO] GET /report/test
+2026-03-25 02:42:48,433 [WARNING] GET /report/test not_found
+2026-03-25 02:42:48,565 [INFO] GET /top10/latest
+2026-03-25 02:42:48,629 [INFO] GET /prompt/current
+2026-03-25 02:43:21,521 [INFO] POST /wechat received client=127.0.0.1 ok=True timestamp=1774377797 nonce=codexklineyangguang
+2026-03-25 02:43:21,522 [INFO] POST /wechat raw_body=<xml>
+<ToUserName><![CDATA[gh_test]]></ToUserName>
+<FromUserName><![CDATA[user_openid_yangguang]]></FromUserName>
+<CreateTime>1774377797</CreateTime>
+<MsgType><![CDATA[text]]></MsgType>
+<Content><![CDATA[?? ????]]></Content>
+<MsgId>990003</MsgId>
+</xml>
+2026-03-25 02:43:21,523 [INFO] POST /wechat parsed from_user=user_openid_yangguang to_user=gh_test msg_type=text msg_id=990003 content=?? ????
+2026-03-25 02:43:21,577 [INFO] POST /wechat stock precheck rejected openid=user_openid_yangguang msg_id=990003 content=?? ????
+2026-03-25 02:43:21,577 [INFO] POST /wechat reply_sent openid=user_openid_yangguang msg_type=text
+2026-03-25 02:51:23,550 [INFO] GET /top10/latest
+2026-03-25 02:51:37,044 [INFO] GET /report/2547f688-e8f0-44ae-9cd7-fe065716ff11
+2026-03-25 02:51:37,096 [INFO] GET /report/2cb0babd-c43e-49f1-a2f8-7eb0effd3f20
+2026-03-25 07:16:52,634 [INFO] GET /top100/latest
+2026-03-25 07:16:52,826 [INFO] GET /top100/latest
+2026-03-25 07:16:54,754 [INFO] GET /top100/latest
+2026-03-25 07:16:57,878 [INFO] GET /report/f3e27b90-daaf-4203-8c45-d58a8ad819ee
+2026-03-25 07:18:24,409 [INFO] GET /report/e1a65b96-0e33-43cd-9fa1-46e3992dce7b
+2026-03-25 07:20:07,850 [INFO] GET /report/e0efe344-ba60-4efb-8d2e-5284d9841279
+2026-03-25 07:20:57,906 [INFO] GET /report/5951ca5d-84b2-41e6-a1b7-fa2d0aa502b4
+2026-03-25 07:21:52,994 [INFO] GET /top100/latest
+2026-03-25 07:22:57,892 [INFO] GET /report/de30ae23-48ff-4112-a657-80181053ad4c
+2026-03-25 07:45:56,667 [INFO] GET /top100/latest
+2026-03-25 07:45:58,516 [INFO] GET /top100/latest
+2026-03-25 07:46:07,848 [INFO] GET /report/6b5b1d25-6d5d-4b8d-bada-e93d1fc9790a
+2026-03-25 07:47:04,271 [INFO] GET /report/c96efc8d-96b7-4f0d-8fb0-ee9139eab460
+2026-03-25 07:48:06,252 [INFO] GET /report/ac4f7ccb-efa6-460a-b070-21d096895053
+2026-03-25 07:51:50,029 [INFO] GET /report/2cb0babd-c43e-49f1-a2f8-7eb0effd3f20
+2026-03-25 09:01:09,636 [INFO] GET /top100/latest
+2026-03-25 09:01:11,427 [INFO] GET /top100/latest
+2026-03-25 09:08:25,142 [INFO] GET /top100/latest
+2026-03-25 09:08:41,706 [INFO] GET /report/b19fc497-8810-405c-bc50-08526617a202
+2026-03-25 13:07:47,543 [INFO] POST /wechat received client=127.0.0.1 ok=True timestamp=1774415267 nonce=761098876
+2026-03-25 13:07:47,594 [INFO] POST /wechat raw_body=<xml><ToUserName><![CDATA[gh_e3a84fa78871]]></ToUserName>
+<FromUserName><![CDATA[oK6mY2wd2Lc62DGAIPXnw5-S2obg]]></FromUserName>
+<CreateTime>1774415266</CreateTime>
+<MsgType><![CDATA[text]]></MsgType>
+<Content><![CDATA[精研科技]]></Content>
+<MsgId>25403517568953592</MsgId>
+</xml>
+2026-03-25 13:07:47,642 [INFO] POST /wechat parsed from_user=oK6mY2wd2Lc62DGAIPXnw5-S2obg to_user=gh_e3a84fa78871 msg_type=text msg_id=25403517568953592 content=精研科技
+2026-03-25 13:07:48,712 [INFO] POST /wechat task queued openid=oK6mY2wd2Lc62DGAIPXnw5-S2obg msg_id=25403517568953592 content=精研科技
+2026-03-25 13:07:48,714 [INFO] POST /wechat reply_sent openid=oK6mY2wd2Lc62DGAIPXnw5-S2obg msg_type=text
+2026-03-25 13:07:48,777 [INFO] run_real_ai_analysis start openid=oK6mY2wd2Lc62DGAIPXnw5-S2obg stock=精研科技
+2026-03-25 13:09:31,027 [INFO] get_access_token success
+2026-03-25 13:09:32,067 [INFO] send_template_message result openid=oK6mY2wd2Lc62DGAIPXnw5-S2obg template_id=R7OvwS6JvBAcvpg7vlayZ-OPK6WKxODPerMSLMEIPFE result={'errcode': 0, 'errmsg': 'ok', 'msgid': 4442994362788233220}
+2026-03-25 13:09:32,070 [INFO] run_real_ai_analysis success openid=oK6mY2wd2Lc62DGAIPXnw5-S2obg stock=精研科技 report_id=ba20aaaa-04f9-4371-b374-33a17f41f7c1 markdown_path=C:\StockLite\app\storage\reports\20260325_130930_精研科技_300709_SZ_w5-S2obg_ba20aaaa-04f9-4371-b374-33a17f41f7c1.md template_result={'errcode': 0, 'errmsg': 'ok', 'msgid': 4442994362788233220}
+2026-03-25 13:09:32,601 [INFO] POST /wechat received client=127.0.0.1 ok=True timestamp=1774415372 nonce=1511853257
+2026-03-25 13:09:32,602 [INFO] POST /wechat raw_body=<xml><ToUserName><![CDATA[gh_e3a84fa78871]]></ToUserName>
+<FromUserName><![CDATA[oK6mY2wd2Lc62DGAIPXnw5-S2obg]]></FromUserName>
+<CreateTime>1774415372</CreateTime>
+<MsgType><![CDATA[event]]></MsgType>
+<Event><![CDATA[TEMPLATESENDJOBFINISH]]></Event>
+<MsgID>4442994362788233220</MsgID>
+<Status><![CDATA[success]]></Status>
+</xml>
+2026-03-25 13:09:32,602 [INFO] POST /wechat parsed from_user=oK6mY2wd2Lc62DGAIPXnw5-S2obg to_user=gh_e3a84fa78871 msg_type=event msg_id= content=
+2026-03-25 13:09:32,602 [INFO] POST /wechat reply_sent openid=oK6mY2wd2Lc62DGAIPXnw5-S2obg msg_type=event
+2026-03-25 13:13:55,955 [INFO] GET /report/ba20aaaa-04f9-4371-b374-33a17f41f7c1
+2026-03-25 14:01:05,450 [INFO] GET /top100/latest
+2026-03-25 14:01:07,646 [INFO] GET /top100/latest
+2026-03-25 14:01:09,810 [INFO] GET /top100/latest
+2026-03-25 14:33:13,678 [INFO] GET /top100/latest
+2026-03-25 14:34:09,512 [INFO] GET /report/f3e27b90-daaf-4203-8c45-d58a8ad819ee
+2026-03-25 14:34:15,631 [INFO] GET /report/e0efe344-ba60-4efb-8d2e-5284d9841279
+2026-03-25 14:34:39,197 [INFO] GET /report/f3e27b90-daaf-4203-8c45-d58a8ad819ee
+2026-03-25 14:34:50,539 [INFO] GET /report/e1a65b96-0e33-43cd-9fa1-46e3992dce7b
+2026-03-25 14:34:57,642 [INFO] GET /report/0c978b26-7619-4dbc-8011-495114cc3583
+2026-03-26 00:00:43,801 [INFO] POST /wechat received client=127.0.0.1 ok=True timestamp=1774454443 nonce=1467534820
+2026-03-26 00:00:43,815 [INFO] POST /wechat raw_body=<xml><ToUserName><![CDATA[gh_e3a84fa78871]]></ToUserName>
+<FromUserName><![CDATA[oK6mY2wd2Lc62DGAIPXnw5-S2obg]]></FromUserName>
+<CreateTime>1774454442</CreateTime>
+<MsgType><![CDATA[text]]></MsgType>
+<Content><![CDATA[Top10生成]]></Content>
+<MsgId>25404079560051980</MsgId>
+</xml>
+2026-03-26 00:00:43,846 [INFO] POST /wechat parsed from_user=oK6mY2wd2Lc62DGAIPXnw5-S2obg to_user=gh_e3a84fa78871 msg_type=text msg_id=25404079560051980 content=Top10生成
+2026-03-26 00:00:43,997 [INFO] POST /wechat top10 generate openid=oK6mY2wd2Lc62DGAIPXnw5-S2obg msg_id=25404079560051980
+2026-03-26 00:00:43,997 [INFO] POST /wechat reply_sent openid=oK6mY2wd2Lc62DGAIPXnw5-S2obg msg_type=text
+2026-03-26 00:00:44,039 [INFO] run_top10_generation start openid=oK6mY2wd2Lc62DGAIPXnw5-S2obg
+2026-03-26 00:01:05,079 [INFO] GET /top10/latest
+2026-03-26 00:18:24,029 [INFO] GET /report/f3e27b90-daaf-4203-8c45-d58a8ad819ee
+2026-03-26 01:12:09,984 [INFO] GET /top100/review/latest
+2026-03-26 01:12:10,930 [INFO] GET /top100/latest
+2026-03-26 01:12:11,084 [INFO] GET /report/test
+2026-03-26 01:12:11,085 [WARNING] GET /report/test not_found
+2026-03-26 01:12:29,099 [INFO] POST /wechat received client=127.0.0.1 ok=True timestamp=1774458743 nonce=codex_top100_review
+2026-03-26 01:12:29,100 [INFO] POST /wechat raw_body=<xml>
+<ToUserName><![CDATA[gh_test]]></ToUserName>
+<FromUserName><![CDATA[user_top100_review]]></FromUserName>
+<CreateTime>1774458743</CreateTime>
+<MsgType><![CDATA[text]]></MsgType>
+<Content><![CDATA[Top100??]]></Content>
+<MsgId>991000</MsgId>
+</xml>
+2026-03-26 01:12:29,100 [INFO] POST /wechat parsed from_user=user_top100_review to_user=gh_test msg_type=text msg_id=991000 content=Top100??
+2026-03-26 01:12:29,156 [INFO] POST /wechat stock precheck rejected openid=user_top100_review msg_id=991000 content=Top100??
+2026-03-26 01:12:29,156 [INFO] POST /wechat reply_sent openid=user_top100_review msg_type=text
+2026-03-26 01:12:49,032 [INFO] POST /wechat received client=127.0.0.1 ok=True timestamp=1774458763 nonce=codex_top100_review_u
+2026-03-26 01:12:49,032 [INFO] POST /wechat raw_body=<xml>
+<ToUserName><![CDATA[gh_test]]></ToUserName>
+<FromUserName><![CDATA[user_top100_review_u]]></FromUserName>
+<CreateTime>1774458763</CreateTime>
+<MsgType><![CDATA[text]]></MsgType>
+<Content><![CDATA[Top100复盘]]></Content>
+<MsgId>991001</MsgId>
+</xml>
+2026-03-26 01:12:49,032 [INFO] POST /wechat parsed from_user=user_top100_review_u to_user=gh_test msg_type=text msg_id=991001 content=Top100复盘
+2026-03-26 01:12:49,749 [INFO] POST /wechat top100 review latest openid=user_top100_review_u msg_id=991001
+2026-03-26 01:12:49,749 [INFO] POST /wechat reply_sent openid=user_top100_review_u msg_type=text
+2026-03-26 01:13:31,302 [INFO] POST /wechat received client=127.0.0.1 ok=True timestamp=1774458805 nonce=codex_top10_check
+2026-03-26 01:13:31,302 [INFO] POST /wechat raw_body=<xml>
+<ToUserName><![CDATA[gh_test]]></ToUserName>
+<FromUserName><![CDATA[user_top10_check]]></FromUserName>
+<CreateTime>1774458805</CreateTime>
+<MsgType><![CDATA[text]]></MsgType>
+<Content><![CDATA[Top10]]></Content>
+<MsgId>991002</MsgId>
+</xml>
+2026-03-26 01:13:31,302 [INFO] POST /wechat parsed from_user=user_top10_check to_user=gh_test msg_type=text msg_id=991002 content=Top10
+2026-03-26 01:13:31,310 [INFO] POST /wechat top10 latest openid=user_top10_check msg_id=991002
+2026-03-26 01:13:31,310 [INFO] POST /wechat reply_sent openid=user_top10_check msg_type=text
+2026-03-26 01:14:14,682 [INFO] GET /top100/review/latest
+2026-03-26 01:15:22,500 [INFO] POST /wechat received client=127.0.0.1 ok=True timestamp=1774458922 nonce=2046307424
+2026-03-26 01:15:22,500 [INFO] POST /wechat raw_body=<xml><ToUserName><![CDATA[gh_e3a84fa78871]]></ToUserName>
+<FromUserName><![CDATA[oK6mY2wd2Lc62DGAIPXnw5-S2obg]]></FromUserName>
+<CreateTime>1774458921</CreateTime>
+<MsgType><![CDATA[text]]></MsgType>
+<Content><![CDATA[Top100复盘]]></Content>
+<MsgId>25404143290608410</MsgId>
+</xml>
+2026-03-26 01:15:22,500 [INFO] POST /wechat parsed from_user=oK6mY2wd2Lc62DGAIPXnw5-S2obg to_user=gh_e3a84fa78871 msg_type=text msg_id=25404143290608410 content=Top100复盘
+2026-03-26 01:15:23,285 [INFO] POST /wechat top100 review latest openid=oK6mY2wd2Lc62DGAIPXnw5-S2obg msg_id=25404143290608410
+2026-03-26 01:15:23,285 [INFO] POST /wechat reply_sent openid=oK6mY2wd2Lc62DGAIPXnw5-S2obg msg_type=text
+2026-03-26 01:24:37,846 [INFO] POST /wechat received client=127.0.0.1 ok=True timestamp=1774459472 nonce=codex_992001
+2026-03-26 01:24:37,846 [INFO] POST /wechat raw_body=<xml>
+<ToUserName><![CDATA[gh_test]]></ToUserName>
+<FromUserName><![CDATA[user_cmd_test]]></FromUserName>
+<CreateTime>1774459472</CreateTime>
+<MsgType><![CDATA[text]]></MsgType>
+<Content><![CDATA[Top100复盘生成]]></Content>
+<MsgId>992001</MsgId>
+</xml>
+2026-03-26 01:24:37,847 [INFO] POST /wechat parsed from_user=user_cmd_test to_user=gh_test msg_type=text msg_id=992001 content=Top100复盘生成
+2026-03-26 01:24:37,848 [INFO] POST /wechat top100 review generate openid=user_cmd_test msg_id=992001
+2026-03-26 01:24:37,848 [INFO] POST /wechat reply_sent openid=user_cmd_test msg_type=text
+2026-03-26 01:24:37,856 [INFO] run_top100_review_generation start openid=user_cmd_test
+2026-03-26 01:24:38,358 [INFO] POST /wechat received client=127.0.0.1 ok=True timestamp=1774459472 nonce=codex_992002
+2026-03-26 01:24:38,358 [INFO] POST /wechat raw_body=<xml>
+<ToUserName><![CDATA[gh_test]]></ToUserName>
+<FromUserName><![CDATA[user_cmd_test]]></FromUserName>
+<CreateTime>1774459472</CreateTime>
+<MsgType><![CDATA[text]]></MsgType>
+<Content><![CDATA[Top100复盘]]></Content>
+<MsgId>992002</MsgId>
+</xml>
+2026-03-26 01:24:38,358 [INFO] POST /wechat parsed from_user=user_cmd_test to_user=gh_test msg_type=text msg_id=992002 content=Top100复盘
+2026-03-26 01:24:39,238 [INFO] POST /wechat top100 review latest openid=user_cmd_test msg_id=992002
+2026-03-26 01:24:39,238 [INFO] POST /wechat reply_sent openid=user_cmd_test msg_type=text
+2026-03-26 01:24:39,398 [INFO] POST /wechat received client=127.0.0.1 ok=True timestamp=1774459474 nonce=codex_992003
+2026-03-26 01:24:39,398 [INFO] POST /wechat raw_body=<xml>
+<ToUserName><![CDATA[gh_test]]></ToUserName>
+<FromUserName><![CDATA[user_cmd_test]]></FromUserName>
+<CreateTime>1774459474</CreateTime>
+<MsgType><![CDATA[text]]></MsgType>
+<Content><![CDATA[Top10]]></Content>
+<MsgId>992003</MsgId>
+</xml>
+2026-03-26 01:24:39,398 [INFO] POST /wechat parsed from_user=user_cmd_test to_user=gh_test msg_type=text msg_id=992003 content=Top10
+2026-03-26 01:24:39,408 [INFO] POST /wechat top10 latest openid=user_cmd_test msg_id=992003
+2026-03-26 01:24:39,408 [INFO] POST /wechat reply_sent openid=user_cmd_test msg_type=text
+2026-03-26 01:24:39,449 [INFO] get_access_token success
+2026-03-26 01:24:39,450 [INFO] send_custom_message start openid=user_cmd_test chunks=1 content_length=261
+2026-03-26 01:24:40,062 [INFO] send_custom_message chunk_result openid=user_cmd_test result={'errcode': 40003, 'errmsg': 'invalid openid rid: 69c41a57-13a7d8c2-30930a11'}
+2026-03-26 01:24:40,064 [INFO] run_top100_review_generation success openid=user_cmd_test compare_trade_date=20260325 markdown_path=C:\StockLite\app\storage\top100_reviews\top100_review_20260325_20260324_233001.md
+2026-03-26 01:33:08,809 [INFO] GET /report/ba20aaaa-04f9-4371-b374-33a17f41f7c1
+2026-03-26 02:22:32,980 [INFO] GET /top10/latest
+2026-03-26 08:36:31,874 [INFO] POST /wechat received client=127.0.0.1 ok=True timestamp=1774485391 nonce=967831773
+2026-03-26 08:36:31,875 [INFO] POST /wechat raw_body=<xml><ToUserName><![CDATA[gh_e3a84fa78871]]></ToUserName>
+<FromUserName><![CDATA[oK6mY2wd2Lc62DGAIPXnw5-S2obg]]></FromUserName>
+<CreateTime>1774485390</CreateTime>
+<MsgType><![CDATA[text]]></MsgType>
+<Content><![CDATA[Top10]]></Content>
+<MsgId>25404522793113014</MsgId>
+</xml>
+2026-03-26 08:36:31,875 [INFO] POST /wechat parsed from_user=oK6mY2wd2Lc62DGAIPXnw5-S2obg to_user=gh_e3a84fa78871 msg_type=text msg_id=25404522793113014 content=Top10
+2026-03-26 08:36:31,885 [INFO] POST /wechat top10 latest openid=oK6mY2wd2Lc62DGAIPXnw5-S2obg msg_id=25404522793113014
+2026-03-26 08:36:31,885 [INFO] POST /wechat reply_sent openid=oK6mY2wd2Lc62DGAIPXnw5-S2obg msg_type=text
+2026-03-26 08:36:48,249 [INFO] GET /top10/latest
+2026-03-26 08:36:57,606 [INFO] POST /wechat received client=127.0.0.1 ok=True timestamp=1774485417 nonce=1971254224
+2026-03-26 08:36:57,607 [INFO] POST /wechat raw_body=<xml><ToUserName><![CDATA[gh_e3a84fa78871]]></ToUserName>
+<FromUserName><![CDATA[oK6mY2wd2Lc62DGAIPXnw5-S2obg]]></FromUserName>
+<CreateTime>1774485416</CreateTime>
+<MsgType><![CDATA[text]]></MsgType>
+<Content><![CDATA[Top10生成]]></Content>
+<MsgId>25404522487046608</MsgId>
+</xml>
+2026-03-26 08:36:57,607 [INFO] POST /wechat parsed from_user=oK6mY2wd2Lc62DGAIPXnw5-S2obg to_user=gh_e3a84fa78871 msg_type=text msg_id=25404522487046608 content=Top10生成
+2026-03-26 08:36:57,612 [INFO] POST /wechat top10 generate openid=oK6mY2wd2Lc62DGAIPXnw5-S2obg msg_id=25404522487046608
+2026-03-26 08:36:57,613 [INFO] POST /wechat reply_sent openid=oK6mY2wd2Lc62DGAIPXnw5-S2obg msg_type=text
+2026-03-26 08:37:04,091 [INFO] GET /top10/latest
+2026-03-26 10:39:34,871 [INFO] GET /top100/latest
+2026-03-26 10:39:37,159 [INFO] GET /top100/latest
+2026-03-26 10:39:55,437 [INFO] GET /report/e1a65b96-0e33-43cd-9fa1-46e3992dce7b
+2026-03-26 11:22:21,066 [INFO] POST /wechat received client=127.0.0.1 ok=True timestamp=1774495340 nonce=1704138951
+2026-03-26 11:22:21,067 [INFO] POST /wechat raw_body=<xml><ToUserName><![CDATA[gh_e3a84fa78871]]></ToUserName>
+<FromUserName><![CDATA[oK6mY2wd2Lc62DGAIPXnw5-S2obg]]></FromUserName>
+<CreateTime>1774495340</CreateTime>
+<MsgType><![CDATA[text]]></MsgType>
+<Content><![CDATA[华特气体]]></Content>
+<MsgId>25404664243187732</MsgId>
+</xml>
+2026-03-26 11:22:21,067 [INFO] POST /wechat parsed from_user=oK6mY2wd2Lc62DGAIPXnw5-S2obg to_user=gh_e3a84fa78871 msg_type=text msg_id=25404664243187732 content=华特气体
+2026-03-26 11:22:21,109 [INFO] POST /wechat task queued openid=oK6mY2wd2Lc62DGAIPXnw5-S2obg msg_id=25404664243187732 content=华特气体
+2026-03-26 11:22:21,109 [INFO] POST /wechat reply_sent openid=oK6mY2wd2Lc62DGAIPXnw5-S2obg msg_type=text
+2026-03-26 11:22:21,110 [INFO] run_real_ai_analysis start openid=oK6mY2wd2Lc62DGAIPXnw5-S2obg stock=华特气体
+2026-03-26 11:26:00,165 [INFO] get_access_token success
+2026-03-26 11:26:01,203 [INFO] send_template_message result openid=oK6mY2wd2Lc62DGAIPXnw5-S2obg template_id=R7OvwS6JvBAcvpg7vlayZ-OPK6WKxODPerMSLMEIPFE result={'errcode': 0, 'errmsg': 'ok', 'msgid': 4444339712992100356}
+2026-03-26 11:26:01,205 [INFO] run_real_ai_analysis success openid=oK6mY2wd2Lc62DGAIPXnw5-S2obg stock=华特气体 report_id=1fe1ddab-f8a5-4a7a-a8fe-8ddadc31f9ae markdown_path=C:\StockLite\app\storage\reports\20260326_112559_华特气体_688268_SH_w5-S2obg_1fe1ddab-f8a5-4a7a-a8fe-8ddadc31f9ae.md template_result={'errcode': 0, 'errmsg': 'ok', 'msgid': 4444339712992100356}
+2026-03-26 11:26:01,775 [INFO] POST /wechat received client=127.0.0.1 ok=True timestamp=1774495561 nonce=1688535503
+2026-03-26 11:26:01,775 [INFO] POST /wechat raw_body=<xml><ToUserName><![CDATA[gh_e3a84fa78871]]></ToUserName>
+<FromUserName><![CDATA[oK6mY2wd2Lc62DGAIPXnw5-S2obg]]></FromUserName>
+<CreateTime>1774495561</CreateTime>
+<MsgType><![CDATA[event]]></MsgType>
+<Event><![CDATA[TEMPLATESENDJOBFINISH]]></Event>
+<MsgID>4444339712992100356</MsgID>
+<Status><![CDATA[success]]></Status>
+</xml>
+2026-03-26 11:26:01,775 [INFO] POST /wechat parsed from_user=oK6mY2wd2Lc62DGAIPXnw5-S2obg to_user=gh_e3a84fa78871 msg_type=event msg_id= content=
+2026-03-26 11:26:01,775 [INFO] POST /wechat reply_sent openid=oK6mY2wd2Lc62DGAIPXnw5-S2obg msg_type=event
+2026-03-26 11:31:06,787 [INFO] GET /report/1fe1ddab-f8a5-4a7a-a8fe-8ddadc31f9ae
+2026-03-26 11:31:20,788 [INFO] GET /report/1fe1ddab-f8a5-4a7a-a8fe-8ddadc31f9ae
+2026-03-26 11:32:00,122 [INFO] GET /report/1fe1ddab-f8a5-4a7a-a8fe-8ddadc31f9ae
+2026-03-26 11:34:19,576 [INFO] POST /wechat received client=127.0.0.1 ok=True timestamp=1774496059 nonce=1405739909
+2026-03-26 11:34:19,577 [INFO] POST /wechat raw_body=<xml><ToUserName><![CDATA[gh_e3a84fa78871]]></ToUserName>
+<FromUserName><![CDATA[oK6mY2wd2Lc62DGAIPXnw5-S2obg]]></FromUserName>
+<CreateTime>1774496058</CreateTime>
+<MsgType><![CDATA[text]]></MsgType>
+<Content><![CDATA[华特气体]]></Content>
+<MsgId>25404673051659266</MsgId>
+</xml>
+2026-03-26 11:34:19,577 [INFO] POST /wechat parsed from_user=oK6mY2wd2Lc62DGAIPXnw5-S2obg to_user=gh_e3a84fa78871 msg_type=text msg_id=25404673051659266 content=华特气体
+2026-03-26 11:34:19,587 [INFO] POST /wechat task queued openid=oK6mY2wd2Lc62DGAIPXnw5-S2obg msg_id=25404673051659266 content=华特气体
+2026-03-26 11:34:19,588 [INFO] POST /wechat reply_sent openid=oK6mY2wd2Lc62DGAIPXnw5-S2obg msg_type=text
+2026-03-26 11:34:19,588 [INFO] run_real_ai_analysis start openid=oK6mY2wd2Lc62DGAIPXnw5-S2obg stock=华特气体
+2026-03-26 11:34:31,847 [INFO] GET /report/2547f688-e8f0-44ae-9cd7-fe065716ff11
+2026-03-26 11:36:08,001 [INFO] get_access_token success
+2026-03-26 11:36:09,002 [INFO] send_template_message result openid=oK6mY2wd2Lc62DGAIPXnw5-S2obg template_id=R7OvwS6JvBAcvpg7vlayZ-OPK6WKxODPerMSLMEIPFE result={'errcode': 0, 'errmsg': 'ok', 'msgid': 4444349910485975040}
+2026-03-26 11:36:09,004 [INFO] run_real_ai_analysis success openid=oK6mY2wd2Lc62DGAIPXnw5-S2obg stock=华特气体 report_id=7665cec5-6c5d-4732-9c1c-72cd12ce450e markdown_path=C:\StockLite\app\storage\reports\20260326_113607_华特气体_688268_SH_w5-S2obg_7665cec5-6c5d-4732-9c1c-72cd12ce450e.md template_result={'errcode': 0, 'errmsg': 'ok', 'msgid': 4444349910485975040}
+2026-03-26 11:36:09,690 [INFO] POST /wechat received client=127.0.0.1 ok=True timestamp=1774496169 nonce=955868375
+2026-03-26 11:36:09,690 [INFO] POST /wechat raw_body=<xml><ToUserName><![CDATA[gh_e3a84fa78871]]></ToUserName>
+<FromUserName><![CDATA[oK6mY2wd2Lc62DGAIPXnw5-S2obg]]></FromUserName>
+<CreateTime>1774496169</CreateTime>
+<MsgType><![CDATA[event]]></MsgType>
+<Event><![CDATA[TEMPLATESENDJOBFINISH]]></Event>
+<MsgID>4444349910485975040</MsgID>
+<Status><![CDATA[success]]></Status>
+</xml>
+2026-03-26 11:36:09,690 [INFO] POST /wechat parsed from_user=oK6mY2wd2Lc62DGAIPXnw5-S2obg to_user=gh_e3a84fa78871 msg_type=event msg_id= content=
+2026-03-26 11:36:09,690 [INFO] POST /wechat reply_sent openid=oK6mY2wd2Lc62DGAIPXnw5-S2obg msg_type=event
+2026-03-26 12:22:04,425 [INFO] GET /report/7665cec5-6c5d-4732-9c1c-72cd12ce450e
+2026-03-26 12:23:28,115 [INFO] GET /report/7665cec5-6c5d-4732-9c1c-72cd12ce450e
+2026-03-26 12:23:36,532 [INFO] GET /report/7665cec5-6c5d-4732-9c1c-72cd12ce450e
+2026-03-26 12:29:41,358 [INFO] GET /report/7665cec5-6c5d-4732-9c1c-72cd12ce450e
+2026-03-26 12:56:54,145 [INFO] GET /report/7665cec5-6c5d-4732-9c1c-72cd12ce450e
+2026-03-26 13:07:55,718 [INFO] GET /report/7665cec5-6c5d-4732-9c1c-72cd12ce450e
+2026-03-26 13:08:06,518 [INFO] GET /report/7665cec5-6c5d-4732-9c1c-72cd12ce450e
+2026-03-26 13:08:08,264 [INFO] GET /report/7665cec5-6c5d-4732-9c1c-72cd12ce450e
+2026-03-26 23:21:38,818 [INFO] GET /top10/latest
